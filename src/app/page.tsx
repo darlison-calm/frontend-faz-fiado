@@ -1,6 +1,5 @@
-import Image from "next/image";
-import RegisterForm from "./signup/registerForm";
 
+import RegisterForm from "./signup/registerForm";
 export default function Home() {
   return (
     <RegisterForm></RegisterForm>

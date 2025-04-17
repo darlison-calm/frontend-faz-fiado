@@ -1,8 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import InputField from "@/components/ui/inputField";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -21,97 +20,77 @@ const formSchema = z
             message: "A senha deve ter no mínimo 6 caracteres.",
         }),
         matchingPassword: z.string(),
+        phone: z.string(),
+
     })
     .refine((data) => data.password === data.matchingPassword, {
         path: ["matchingPassword"],
         message: "As senhas não coincidem.",
     });
 
+export type FormFields = z.infer<typeof formSchema>
 export default function RegisterForm() {
-
-    const form = useForm<z.infer<typeof formSchema>>({
+    const { 
+        register, 
+        handleSubmit, 
+        formState: { errors, isSubmitting },
+    } = useForm<FormFields>({
         resolver: zodResolver(formSchema),
-        defaultValues: {
-            username: "",
-            email: "",
-            password: "",
-            matchingPassword: "",
-        },
+        mode: "onBlur",
+        reValidateMode: "onChange"
     });
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-            console.log(values)
+    function onSubmit(data: FormFields) {
+        console.log(data);
     }
+
     return (
-        <div className="flex items-center min-h-screen justify-center py-12 px-4">
-          <div className="w-full max-w-md">
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-                <FormField
-                  control={form.control}
+      <div className="w-5/6 mt-2 max-w-sm mx-auto">
+          <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+              <InputField
+                  id="username_input"
                   name="username"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nome de usuário</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Nome de usuário" {...field} />
-                      </FormControl>
-                     
-                        <FormMessage className="text-sm" />
-                  
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
+                  type="text"
+                  label="Nome de usuário"
+                  register={register}
+                  errors={errors}
+              />
+              <InputField
+                  id="email_input"
                   name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Email" {...field} />
-                      </FormControl>
-                    
-                        <FormMessage className="text-sm" />
-                     
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
+                  type="email"
+                  label="Email"
+                  register={register}
+                  errors={errors}
+              />
+              <InputField
+                  id="password_input"
                   name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Senha</FormLabel>
-                      <FormControl>
-                        <Input type="password" placeholder="Senha" {...field} />
-                      </FormControl>
-                    
-                        <FormMessage className="text-sm" />
-                     
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
+                  type="password"
+                  label="Senha"
+                  register={register}
+                  errors={errors}
+              />
+              <InputField
+                  id="matching_password_input"
                   name="matchingPassword"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Confirmar Senha</FormLabel>
-                      <FormControl>
-                        <Input type="password" placeholder="Confirmar Senha" {...field} />
-                      </FormControl>
-                    
-                        <FormMessage></FormMessage>
-                    </FormItem>
-                  )}
-                />
-                <Button className="w-full" disabled={(form.formState.isValid)}  type="submit">Submit</Button>
-              </form>
-            </Form>
-          </div>
-        </div>
-      )
+                  type="password"
+                  label="Confirmar Senha"
+                  register={register}
+                  errors={errors}
+              />
+              <InputField
+                  id="phone_input"
+                  name="phone"
+                  type="tel"
+                  label="Telefone"
+                  register={register}
+                  errors={errors}
+              />
+              <Button className="w-full" disabled={isSubmitting} type="submit">
+                  {isSubmitting ? "Carregando" : "Criar Conta"}
+              </Button>
+          </form>
+      </div>
+  );
 }
-
-

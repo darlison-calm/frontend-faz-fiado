@@ -20,7 +20,7 @@ const formSchema = z
             message: "A senha deve ter no mínimo 6 caracteres.",
         }),
         matchingPassword: z.string(),
-        phone: z.string(),
+        // phoneNumber: z.string(),
 
     })
     .refine((data) => data.password === data.matchingPassword, {
@@ -40,9 +40,40 @@ export default function RegisterForm() {
         reValidateMode: "onChange"
     });
 
-    function onSubmit(data: FormFields) {
-        console.log(data);
-    }
+    async function onSubmit(data: FormFields) {
+      try {
+
+        const payload = {
+          ...data,
+          phoneNumber: {
+            value: "+5511983354111",
+            locale: "BR"
+          }
+        };
+
+          const response = await fetch("http://localhost:8080/users/registration", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+              body: JSON.stringify(payload),
+          });
+
+          // Verificar se a requisição foi bem-sucedida
+          if (!response.ok) {
+              const errorData = await response.json();
+              throw new Error(errorData.message || "Erro ao criar conta.");
+          }
+
+          // Sucesso: obter a resposta da API
+          const result = await response.json();
+          alert("Conta criada com sucesso! Bem-vindo(a), " + (data.username || data.email));
+      } catch (error) {
+          // Tratar erros
+          const errorMessage = error instanceof Error ? error.message : "Ocorreu um erro inesperado.";
+          alert(errorMessage);
+      }
+  }
 
     return (
       <div className="w-5/6 mt-2 max-w-sm mx-auto">
@@ -79,14 +110,14 @@ export default function RegisterForm() {
                   register={register}
                   errors={errors}
               />
-              <InputField
+              {/* <InputField
                   id="phone_input"
-                  name="phone"
+                  name="phoneNumber"
                   type="tel"
                   label="Telefone"
                   register={register}
                   errors={errors}
-              />
+              /> */}
               <Button className="w-full" disabled={isSubmitting} type="submit">
                   {isSubmitting ? "Carregando" : "Criar Conta"}
               </Button>

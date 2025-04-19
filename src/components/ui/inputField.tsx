@@ -1,13 +1,13 @@
 import { UseFormRegister, FieldErrors } from "react-hook-form";
-import { FormFields } from "@/app/signup/registerForm"
+import { TCreateUserSchema } from "@/users/userTypes";
 
 interface InputFieldProps {
   id: string;
-  name: keyof FormFields;
+  name: keyof TCreateUserSchema;
   type: string;
   label: string;
-  register: UseFormRegister<FormFields>;
-  errors: FieldErrors<FormFields>;
+  register: UseFormRegister<TCreateUserSchema>;
+  errors: FieldErrors<TCreateUserSchema>;
 }
 
 export default function InputField({ id, name, type, label, register, errors }: InputFieldProps) {

@@ -2,72 +2,62 @@
 
 import { Button } from "@/components/ui/button";
 import InputField from "@/components/ui/inputField";
+import { createUserSchema, TAuthUSer, TCreateUser, TCreateUserSchema } from "@/users/userTypes";
+import { UserService } from "@/users/userSevice";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
 
-const formSchema = z
-    .object({
-        username: z.string().min(2, {
-            message: "O nome de usuário deve ter no mínimo 2 caracteres.",
-        }).max(50, {
-            message: "O nome de usuário deve ter no máximo 50 caracteres."
-        }).optional(),
-        email: z.string().email({
-            message: "E-mail inválido.",
-        }),
-        password: z.string().min(6, {
-            message: "A senha deve ter no mínimo 6 caracteres.",
-        }),
-        matchingPassword: z.string(),
-        // phoneNumber: z.string(),
 
-    })
-    .refine((data) => data.password === data.matchingPassword, {
-        path: ["matchingPassword"],
-        message: "As senhas não coincidem.",
-    });
-
-export type FormFields = z.infer<typeof formSchema>
 export default function RegisterForm() {
     const { 
         register, 
         handleSubmit, 
         formState: { errors, isSubmitting },
-    } = useForm<FormFields>({
-        resolver: zodResolver(formSchema),
+        setError
+    } = useForm <TCreateUserSchema>({
+        resolver: zodResolver(createUserSchema),
         mode: "onBlur",
         reValidateMode: "onChange"
     });
 
-    async function onSubmit(data: FormFields) {
+    async function onSubmit(formData: TCreateUserSchema) {
       try {
+        const { phoneNumber: originalPhoneNumber, ...otherFormData } = formData;
 
-        const payload = {
-          ...data,
-          phoneNumber: {
-            value: "+5511983354111",
-            locale: "BR"
-          }
-        };
+        const createUserPayload: TCreateUser = {
+            ...otherFormData,
+            phoneNumber: {
+                value: `+55${originalPhoneNumber}`,
+                locale: "BR"
+            }
+        }
 
-          const response = await fetch("http://localhost:8080/users/registration", {
-              method: "POST",
-              headers: {
-                  "Content-Type": "application/json",
-              },
-              body: JSON.stringify(payload),
-          });
+        const createResponse = await UserService.createUser(createUserPayload);
+        if (!createResponse.ok) {
+            const errorData = await createResponse.json();
+            if (typeof errorData !== "object" || errorData == null) {
+                throw new Error("Falha ao processar criação");
+            }
+            
+            Object.entries(errorData).forEach(([field, mess]) => {
+                setError(field as keyof TCreateUserSchema, {
+                    message: mess as string,
+                    type: "server"
+                })
+            })
+            return;
+        }
+        const authPayload: TAuthUSer = {
+            login: formData.email,
+            password: formData.password,
+          };
 
-          // Verificar se a requisição foi bem-sucedida
-          if (!response.ok) {
-              const errorData = await response.json();
-              throw new Error(errorData.message || "Erro ao criar conta.");
-          }
-
-          // Sucesso: obter a resposta da API
-          const result = await response.json();
-          alert("Conta criada com sucesso! Bem-vindo(a), " + (data.username || data.email));
+        const authRes = await UserService.authUser(authPayload); 
+        if (!authRes.ok) {
+            throw new Error("Falha ao fazer login");
+          }  
+          const token  = JSON.stringify(await authRes.json());
+          localStorage.setItem("authToken", token);
       } catch (error) {
           // Tratar erros
           const errorMessage = error instanceof Error ? error.message : "Ocorreu um erro inesperado.";
@@ -79,18 +69,18 @@ export default function RegisterForm() {
       <div className="w-5/6 mt-2 max-w-sm mx-auto">
           <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
               <InputField
-                  id="username_input"
-                  name="username"
-                  type="text"
-                  label="Nome de usuário"
-                  register={register}
-                  errors={errors}
-              />
-              <InputField
                   id="email_input"
                   name="email"
                   type="email"
                   label="Email"
+                  register={register}
+                  errors={errors}
+              />
+              <InputField
+                  id="username_input"
+                  name="username"
+                  type="text"
+                  label="Nome de usuário"
                   register={register}
                   errors={errors}
               />
@@ -110,14 +100,14 @@ export default function RegisterForm() {
                   register={register}
                   errors={errors}
               />
-              {/* <InputField
+            <InputField
                   id="phone_input"
                   name="phoneNumber"
                   type="tel"
                   label="Telefone"
                   register={register}
                   errors={errors}
-              /> */}
+              />
               <Button className="w-full" disabled={isSubmitting} type="submit">
                   {isSubmitting ? "Carregando" : "Criar Conta"}
               </Button>

@@ -31,7 +31,7 @@ export type TCreateUser = {
 }
 
 export type TAuthUSer = {
-    login: string;
+    loginMethod: string;
     password: string;
 }
 

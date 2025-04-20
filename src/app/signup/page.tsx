@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import { Button } from "@/components/ui/button";
 import InputField from "@/components/ui/inputField";
@@ -52,7 +52,7 @@ export default function RegisterForm() {
             }
             
             const authPayload: TAuthUSer = {
-                login: formData.email,
+                loginMethod: formData.email,
                 password: formData.password,
             };
 
@@ -61,7 +61,6 @@ export default function RegisterForm() {
             
             const token  = JSON.stringify(await authRes.json());
             localStorage.setItem("authToken", token);
-            router.push("/dashboard"); 
       } catch (error) {
             const errorMessage = error instanceof Error ? error.message : "Ocorreu um erro inesperado.";
             alert(errorMessage);

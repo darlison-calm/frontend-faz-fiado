@@ -1,7 +1,14 @@
+"use client"
 
-import RegisterForm from "./pages/signup/page";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 export default function Home() {
-  return (
-    <RegisterForm></RegisterForm>
-  );
+  const router = useRouter();
+
+  useEffect(() => {
+    router.push("/signin");
+  }, [router]);
+
+  return null;
 }

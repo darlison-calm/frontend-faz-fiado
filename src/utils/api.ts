@@ -1,6 +1,6 @@
 import { apiBaseUrl } from "@/utils/config"
 
-export const apiFetch = async (endPoint, options) => {
+export const apiFetch = async (endPoint: string, options: RequestInit = {}) => {
     const response = await fetch(`${apiBaseUrl}${endPoint}`, {
         headers: {
             'Content-type': "application/json",

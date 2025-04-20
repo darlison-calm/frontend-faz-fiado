@@ -1,5 +1,5 @@
 import { apiFetch } from "@/utils/api";
-import { TAuthUSer, TCreateUser } from "@/users/userTypes";
+import { TAuthUSer, TCreateUser } from "@/users/types/userTypes";
 
 export class UserService {
     static async createUser(data: TCreateUser) {

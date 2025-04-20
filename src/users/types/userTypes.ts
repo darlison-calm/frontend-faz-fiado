@@ -19,13 +19,8 @@ export const createUserSchema = z
         message: "As senhas não coincidem.",
     });
 
+
 export type TCreateUserSchema = z.infer<typeof createUserSchema>
-
-
-type PhoneNumber = {
-    value: string;
-    locale: string;
-  };
 
 export type TCreateUser = {
     email: string;
@@ -39,3 +34,9 @@ export type TAuthUSer = {
     login: string;
     password: string;
 }
+
+type PhoneNumber = {
+    value: string;
+    locale: string;
+  };
+

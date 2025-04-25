@@ -25,7 +25,7 @@ const ButtonWithIcon: React.FC<ButtonProps> = ({ onClick, children, label }) => 
   return (
     <button
       onClick={handleClick}
-      className={`flex flex-1 justify-center items-center bg-white border border-gray-300 rounded-lg py-2 px-1.5 ${shake ? 'shake' : ''}`}
+      className={`flex flex-1 justify-center items-center bg-white border border-gray-200 rounded-lg py-2 px-1.5 ${shake ? 'shake' : ''}`}
       // style={{ backgroundColor: 'white', borderRadius: '8px', border: '1px solid #ccc' }}
     >
       {children}

@@ -14,7 +14,7 @@ import ClientList from "./components/clientList";
 import FilterOptions from "./components/filterOptions";
 
 export default function ClientsInteface() {
-  const [darkMode, setDarkMode] = useState(true)
+  const [darkMode, setDarkMode] = useState(false)
   const [hideValues, setHideValues] = useState(false)
   const totalDebt = 900;
 

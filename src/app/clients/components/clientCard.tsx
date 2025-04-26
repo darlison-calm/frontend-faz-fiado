@@ -2,7 +2,7 @@ import React from 'react';
 import { User, MoreVertical } from 'lucide-react';
 
 type Client = {
-    id: number; 
+    id: number;
     name: string;
 };
 
@@ -10,7 +10,7 @@ export default function ClientCard({ client }: { client: Client }) {
 
     return (
         <div
-            className="flex items-center py-3 px-3 bg-[#FBFFFE] rounded-lg border border-gray-200 shadow-xs hover:shadow-md w-full"
+            className="flex items-center py-3 px-3 bg-[var(--card-foreground)] rounded-lg border border-gray-200 shadow-sm hover:shadow-md w-full"
         >
             <div
                 className="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0 bg-[#0065FF]/10"

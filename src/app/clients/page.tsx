@@ -24,7 +24,7 @@ export default function ClientsInteface() {
 
   return (
     <div className="min-h-dvh bg-white">
-      <div className="text-white pt-4 pb-12 px-4" style={{ backgroundColor: 'var(--highlight)' }}>
+      <div className="text-white pt-4 pb-12 px-4 bg-[var(--highlight)]">
 
         <div className="flex justify-between items-center mb-2">
           <h1 className="text-xl font-medium">Clientes</h1>
@@ -59,7 +59,7 @@ export default function ClientsInteface() {
 
       </div>
 
-      <div className="rounded-t-3xl -mt-8 bg-white px-4 pt-4 pb-4 space-y-6" style={{ backgroundColor: 'var(--background)' }}>
+      <div className="rounded-t-3xl -mt-8 px-4 pt-4 pb-4 space-y-6 bg-[var(--background)]">
         <div className="space-y-4">
           {/* Barra de pesquisa */}
           <div className="relative">

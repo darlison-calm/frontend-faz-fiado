@@ -1,5 +1,4 @@
 import { useState } from "react";
-import './shakeAnimation.css';
 import { Button } from "@mui/material";
 
 interface ButtonProps {

@@ -32,7 +32,7 @@ export default function SignInForm() {
                 id="loginMethod_input"
                 name="loginMethod"
                 type="login"
-                label="Email / Nome de usuário"
+                label="Email ou nome de usuário"
                 register={register}
                 errors={errors}
             />
@@ -45,7 +45,7 @@ export default function SignInForm() {
                 errors={errors}
             />
 
-            <Button className="w-full" disabled={isSubmitting} type="submit">
+            <Button className="w-full bg-primary " disabled={isSubmitting} type="submit">
                 {isSubmitting ? "Carregando" : "Entrar"}
             </Button>
         </form>

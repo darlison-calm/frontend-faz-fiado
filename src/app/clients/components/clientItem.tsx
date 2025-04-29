@@ -2,11 +2,11 @@ import React from 'react';
 import { User, MoreVertical } from 'lucide-react';
 
 type Client = {
+    fullName: string
     id: number;
-    name: string;
 };
 
-export default function ClientCard({ client }: { client: Client }) {
+export default function ClientItem({ client }: { client: Client }) {
 
     return (
         <div
@@ -18,7 +18,7 @@ export default function ClientCard({ client }: { client: Client }) {
                 <User className="h-4 w-4 text-[#0065FF]" />
             </div>
             <div className="ml-3 flex-1 min-w-0">
-                <span className="text-sm font-medium block truncate leading-tight">{client.name}</span>
+                <span className="text-sm font-medium block truncate leading-tight">{client.fullName}</span>
             </div>
             <div className="flex items-center">
                 <button className="p-1 rounded-full hover:bg-gray-100">

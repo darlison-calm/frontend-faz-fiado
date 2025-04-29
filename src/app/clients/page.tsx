@@ -13,19 +13,19 @@ import ClientList from "./components/clientList";
 import FilterOptions from "./components/filterOptions";
 import AddClientForm from "./components/addClientForm";
 import AddClientButton from "./components/addClientButton";
-import { UserService } from "@/users/userSevice";
-import { getAuthToken } from "@/utils/auth";
 import { Client } from "./types/clientType";
-import { ClientService } from "./clientSerivce";
+import { fetchClients } from "./clientSerivce";
+import { useRouter } from "next/navigation";
 
 export default function ClientsInteface() {
   const [darkMode, setDarkMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
   const [hideValues, setHideValues] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
   const [clientsData, setClientsData] = useState<Client[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
+  const router = useRouter();
   const total = 900;
 
   function changeColorMode() {
@@ -33,13 +33,14 @@ export default function ClientsInteface() {
   }
 
   useEffect(() => {
-    const abortController = new AbortController();
-    const signal = abortController.signal;
-    ClientService.fetchClients({ signal, setIsLoading, setClientsData })
+    const controller = new AbortController();
 
-    return () => {
-      abortController.abort();
-    };
+    fetchClients({ signal: controller.signal, router })
+      .then(setClientsData)
+      .catch((err) => setError(err.message))
+      .finally(() => setIsLoading(false));
+
+    return () => controller.abort();
   }, []);
 
   return (

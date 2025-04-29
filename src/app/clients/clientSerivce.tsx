@@ -1,42 +1,25 @@
-import { UserService } from "@/users/userSevice";
-import { getAuthToken } from "@/utils/auth";
 import { Client } from "./types/clientType";
+import api from "@/lib/axiosInstance";
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
 
 interface FetchClientsOptions {
     signal?: AbortSignal;
-    setIsLoading?: (loading: boolean) => void;
-    setClientsData?: (clients: Client[]) => void;
+    router: AppRouterInstance;
 }
 
-export class ClientService {
-    static async fetchClients({
-        signal,
-        setIsLoading,
-        setClientsData,
-    }: FetchClientsOptions): Promise<Client[]> {
-        setIsLoading?.(true);
-        try {
-            const token = getAuthToken();
-            if (!token) throw new Error("Token de autenticação não encontrado");
-
-
-            const res = await UserService.getClients(token, { signal });
-            if (!res.ok) throw new Error(`Erro ${res.status}: ${res.statusText}`);
-
-            const clientsList: Client[] = await res.json();
-            setClientsData?.(clientsList);
-            return clientsList;
-        } catch (error) {
-            if (error instanceof Error && error.name !== "AbortError" && (!signal || !signal.aborted)) {
-                console.error("Erro ao buscar clientes:", error);
-                throw error;
-            }
+export async function fetchClients({
+    signal, router
+}: FetchClientsOptions): Promise<Client[]> {
+    try {
+        const response = await api.get('/users/clients', {
+            signal,
+        });
+        return response.data;
+    } catch (error: any) {
+        if (error.name === 'UnauthorizedError') {
+            router.push("/signin");
             return [];
-        } finally {
-            if (!signal?.aborted) {
-                setIsLoading?.(false);
-            }
         }
+        throw new Error("Falha ao buscar clientes.");
     }
 }
-

@@ -1,6 +1,8 @@
+import { BadRequestError } from '@/app/erros/badRequest';
+import { ConflictError } from '@/app/erros/conflict';
 import { UnauthorizedError } from '@/app/erros/unauthorized';
 import { apiBaseUrl } from '@/utils/config';
-import axios, { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 
 const unprotectedRoutes = ["/users/auth", "/users/registration"];
 const getAuthToken = () => {
@@ -9,7 +11,6 @@ const getAuthToken = () => {
     return JSON.parse(tokenData);
 }
 
-
 const api = axios.create({
     baseURL: `${apiBaseUrl}`,
     headers: {
@@ -17,33 +18,42 @@ const api = axios.create({
     },
 });
 
-api.interceptors.request.use(
-    (config: InternalAxiosRequestConfig) => {
-        const isUnprotectedRoute = unprotectedRoutes.some(route => config.url?.includes(route));
-        console.log(isUnprotectedRoute)
-        if (isUnprotectedRoute) {
-            return config;
-        }
-        const token = getAuthToken();
-        config.headers['Authorization'] = `Bearer ${token}`;
+const onRequest = (config: InternalAxiosRequestConfig): InternalAxiosRequestConfig => {
+    const isUnprotectedRoute = unprotectedRoutes.some(route => config.url?.includes(route));
+    if (isUnprotectedRoute) {
+        console.info(`[request] [${JSON.stringify(config)}]`);
         return config;
-
-    },
-    (error) => {
-        return Promise.reject(error);
     }
-);
+    const token = getAuthToken();
+    config.headers['Authorization'] = `Bearer ${token}`;
+    console.info(`[request] [${JSON.stringify(config)}]`);
+    return config;
+}
 
-api.interceptors.response.use(
-    (response: AxiosResponse) => {
-        return response;
-    },
-    (error) => {
-        if (error.response?.status === 401) {
+const onRequestError = (error: AxiosError): Promise<AxiosError> => {
+    console.error(`[request error] [${JSON.stringify(error)}]`);
+    return Promise.reject(error);
+}
+
+const onResponseError = (error: AxiosError): Promise<AxiosError> => {
+    console.error(`[response error] [${JSON.stringify(error)}]`);
+    const status = error.response?.status;
+    switch (status) {
+        case 401:
             return Promise.reject(new UnauthorizedError());
-        }
-        return Promise.reject(error);
+        case 409:
+            return Promise.reject(new ConflictError(error.response));
+        case 400:
+            return Promise.reject(new BadRequestError(error.response));
+        default:
+            return Promise.reject(error);
     }
-);
+}
+const onResponse = (response: AxiosResponse): AxiosResponse => {
+    console.info(`[response] [${JSON.stringify(response)}]`);
+    return response;
+}
 
+api.interceptors.response.use(onResponse, onResponseError);
+api.interceptors.request.use(onRequest, onRequestError);
 export default api;

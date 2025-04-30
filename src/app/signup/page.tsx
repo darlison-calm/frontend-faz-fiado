@@ -7,6 +7,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { useRouter } from "next/navigation";
 import api from "@/lib/axiosInstance";
+import { ConflictError } from "../erros/conflict";
+import { BadRequestError } from "../erros/badRequest";
 
 
 
@@ -49,7 +51,7 @@ export default function RegisterForm() {
       localStorage.setItem("token", token);
       router.push("/clients")
     } catch (error: any) {
-      if (error.response?.status === 409) {
+      if (error instanceof ConflictError || error instanceof BadRequestError) {
         const serverErrors = error.response.data;
         Object.entries(serverErrors).forEach(([field, mes]) => {
           setError(field as keyof TCreateUserSchema, { type: 'server', message: mes as string });

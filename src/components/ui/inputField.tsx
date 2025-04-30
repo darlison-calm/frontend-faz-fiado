@@ -21,7 +21,7 @@ export default function InputField({ id, name, type, label, register, errors }: 
         </label>
       </div>
       {errors[name] && (
-        <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+        <p className="mt-1 text-sm text-red-600 dark:text-red-400">
           <span></span> {errors[name]?.message}
         </p>
       )}

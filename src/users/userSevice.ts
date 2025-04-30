@@ -15,4 +15,14 @@ export class UserService {
             body: JSON.stringify(data)
         });
     }
+
+    static async getClients(token: string, options?: RequestInit) {
+        return apiFetch("/users/clients", {
+            method: "GET",
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+            ...options
+        })
+    }
 }

@@ -1,12 +1,8 @@
-import { useState } from "react";
-import { Button } from "@mui/material";
-
 interface ButtonProps {
   onClick?: () => void;
   children: React.ReactNode;
   label: string;
 }
-
 
 const ButtonWithIcon: React.FC<ButtonProps> = ({ onClick, children, label }) => {
   const handleClick = () => {

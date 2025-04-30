@@ -7,23 +7,47 @@ import {
   Eye,
   Sun,
   Moon,
-  Plus
 } from "lucide-react"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ClientList from "./components/clientList";
 import FilterOptions from "./components/filterOptions";
+import AddClientForm from "./components/addClientForm";
+import AddClientButton from "./components/addClientButton";
+import { Client } from "./types/clientType";
+import { fetchClients } from "./clientSerivce";
+import { useRouter } from "next/navigation";
 
 export default function ClientsInteface() {
-  const [darkMode, setDarkMode] = useState(false)
-  const [hideValues, setHideValues] = useState(false)
-  const totalDebt = 900;
+  const [darkMode, setDarkMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [hideValues, setHideValues] = useState(false);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [clientsData, setClientsData] = useState<Client[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  const router = useRouter();
+  const total = 900;
 
   function changeColorMode() {
-    setDarkMode(!darkMode)
+    setDarkMode(prev => !prev)
   }
 
+  useEffect(() => {
+    const controller = new AbortController();
+
+    fetchClients({ signal: controller.signal, router })
+      .then((data) => {
+        setIsLoading(true);
+        setClientsData(data);
+      })
+      .catch((err) => setError(err.message))
+      .finally(() => setIsLoading(false));
+
+    return () => controller.abort();
+  }, []);
+
   return (
-    <div className="min-h-dvh bg-white">
+    <div className="min-h-dvh">
       <div className="text-white pt-4 pb-12 px-4 bg-[var(--highlight)]">
 
         <div className="flex justify-between items-center mb-2">
@@ -40,7 +64,7 @@ export default function ClientsInteface() {
 
         <div className="mb-2">
           <p className="text-white/80 text-sm">Valor a receber</p>
-          <p className="text-2xl font-semibold">{hideValues ? "R$ ••••" : `R$ ${totalDebt.toFixed(2)}`}</p>
+          <p className="text-2xl font-semibold">{hideValues ? "R$ ••••" : `R$ ${total}`}</p>
         </div>
 
         <button className="flex items-center text-white/80 text-sm" onClick={() => setHideValues(!hideValues)}>
@@ -70,16 +94,11 @@ export default function ClientsInteface() {
           </div>
           <FilterOptions />
         </div>
-        <ClientList />
+        {isLoading && <div>Carregando.............</div>}
+        <ClientList clients={clientsData} />
       </div>
-
-
-
-      <div className="fixed right-4 bottom-20">
-        <button className="w-12 h-12 rounded-full bg-gradient-to-r from-[#0065FF] to-[#0057DB] flex items-center justify-center shadow-lg hover:from-[#004FC7] hover:to-[#005AE6] transition-colors transform hover:scale-110 transition-transform duration-200">
-          <Plus className="h-6 w-6 text-white" />
-        </button>
-      </div>
+      <AddClientButton onClick={() => setModalOpen(true)} />
+      <AddClientForm open={isModalOpen} setOpen={setModalOpen} />
     </div>
   );
 }

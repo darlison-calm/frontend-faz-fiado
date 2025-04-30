@@ -1,12 +1,13 @@
-import ClientCard from "./clientCard";
+import { Client } from "../types/clientType";
+import ClientItem from "./clientItem";
 
-import clients from "@/app/clients/clients.json";
 
-export default function ClientList() {
+
+export default function ClientList({ clients }: { clients: Client[] }) {
     return (
         <div className="space-y-2">
-            {clients.map((client) => (
-                <ClientCard key={client.id} client={client} />
+            {clients.map((client: Client) => (
+                <ClientItem key={client.id} client={client} />
             ))}
         </div>
     )

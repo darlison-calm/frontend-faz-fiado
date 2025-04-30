@@ -1,14 +1,17 @@
-
-
 import { UnauthorizedError } from '@/app/erros/unauthorized';
-import { getAuthToken } from '@/utils/auth';
 import { apiBaseUrl } from '@/utils/config';
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 
-const unprotectedRoutes = ['/users/auth', '/users/registration'];
+const unprotectedRoutes = ["/users/auth", "/users/registration"];
+const getAuthToken = () => {
+    const tokenData = localStorage.getItem('token');
+    if (!tokenData) return null;
+    return JSON.parse(tokenData);
+}
+
 
 const api = axios.create({
-    baseURL: `${apiBaseUrl}`, // Substitua pela sua URL base
+    baseURL: `${apiBaseUrl}`,
     headers: {
         'Content-Type': 'application/json',
     },
@@ -17,15 +20,14 @@ const api = axios.create({
 api.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
         const isUnprotectedRoute = unprotectedRoutes.some(route => config.url?.includes(route));
-
-        if (!isUnprotectedRoute) {
-            const token = getAuthToken();
-            if (token) {
-                config.headers['Authorization'] = `Bearer ${token}`;
-            }
+        console.log(isUnprotectedRoute)
+        if (isUnprotectedRoute) {
+            return config;
         }
-
+        const token = getAuthToken();
+        config.headers['Authorization'] = `Bearer ${token}`;
         return config;
+
     },
     (error) => {
         return Promise.reject(error);
@@ -37,7 +39,7 @@ api.interceptors.response.use(
         return response;
     },
     (error) => {
-        if (error.response?.status === 401 || error.response?.status === 403) {
+        if (error.response?.status === 401) {
             return Promise.reject(new UnauthorizedError());
         }
         return Promise.reject(error);

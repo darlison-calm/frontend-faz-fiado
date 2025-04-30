@@ -1,6 +1,7 @@
 import { Client } from "./types/clientType";
 import api from "@/lib/axiosInstance";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { UnauthorizedError } from "../erros/unauthorized";
 
 interface FetchClientsOptions {
     signal?: AbortSignal;
@@ -15,8 +16,8 @@ export async function fetchClients({
             signal,
         });
         return response.data;
-    } catch (error: any) {
-        if (error.name === 'UnauthorizedError') {
+    } catch (error: unknown) {
+        if (error instanceof UnauthorizedError) {
             router.push("/signin");
             return [];
         }

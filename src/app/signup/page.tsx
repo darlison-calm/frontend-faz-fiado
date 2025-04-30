@@ -3,10 +3,11 @@
 import { Button } from "@/components/ui/button";
 import InputField from "@/components/ui/inputField";
 import { createUserSchema, TAuthUSer, TCreateUser, TCreateUserSchema } from "@/users/types/userTypes";
-import { UserService } from "@/users/userSevice";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { useRouter } from "next/navigation";
+import api from "@/lib/axiosInstance";
+
 
 
 export default function RegisterForm() {
@@ -35,36 +36,27 @@ export default function RegisterForm() {
         }
       }
 
-      const createResponse = await UserService.createUser(createUserPayload);
-      if (!createResponse.ok) {
-        const errorData = await createResponse.json();
-        if (typeof errorData !== "object" || errorData == null) {
-          throw new Error("Falha ao processar criação");
-        }
-
-        Object.entries(errorData).forEach(([field, mess]) => {
-          setError(field as keyof TCreateUserSchema, {
-            message: mess as string,
-            type: "server"
-          })
-        })
-        return;
-      }
+      await api.post('/users/registration', createUserPayload);
 
       const authPayload: TAuthUSer = {
         loginMethod: formData.email,
         password: formData.password,
       };
 
-      const authRes = await UserService.authUser(authPayload);
-      if (!authRes.ok) throw new Error("Falha ao fazer login");
+      const authRes = await api.post('/users/auth', authPayload)
 
-      const token = JSON.stringify(await authRes.json());
+      const token = JSON.stringify(authRes.data?.token)
       localStorage.setItem("token", token);
-      router.push("/clients");
-    } catch (error) {
+      router.push("/clients")
+    } catch (error: any) {
+      if (error.response?.status === 409) {
+        const serverErrors = error.response.data;
+        Object.entries(serverErrors).forEach(([field, mes]) => {
+          setError(field as keyof TCreateUserSchema, { type: 'server', message: mes as string });
+        });
+      }
       const errorMessage = error instanceof Error ? error.message : "Ocorreu um erro inesperado.";
-      alert(errorMessage);
+      console.log(errorMessage);
     }
   }
 

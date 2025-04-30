@@ -2,8 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import InputField from "@/components/ui/inputFieldLogIn";
+import api from "@/lib/axiosInstance";
 import { TAuthUSer } from "@/users/types/userTypes";
-import { UserService } from "@/users/userSevice";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 
@@ -16,11 +16,9 @@ export default function SignInForm() {
     } = useForm<TAuthUSer>();
 
     const onSubmit = async (formData: TAuthUSer) => {
-        const authRes = await UserService.authUser(formData);
-        if (!authRes.ok) throw new Error("Falha ao fazer login");
-
-        const token = JSON.stringify(await authRes.json());
-        localStorage.setItem("token", token);
+        const res = await api.post("/users/auth", formData)
+        const token = res.data.token;
+        localStorage.setItem("token", JSON.stringify(token));
         router.push("/clients")
     }
 

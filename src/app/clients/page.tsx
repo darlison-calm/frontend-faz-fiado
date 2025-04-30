@@ -36,7 +36,10 @@ export default function ClientsInteface() {
     const controller = new AbortController();
 
     fetchClients({ signal: controller.signal, router })
-      .then(setClientsData)
+      .then((data) => {
+        setIsLoading(true);
+        setClientsData(data);
+      })
       .catch((err) => setError(err.message))
       .finally(() => setIsLoading(false));
 

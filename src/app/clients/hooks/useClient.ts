@@ -3,6 +3,7 @@ import { Client, CreateClientData } from "../types/clientType";
 import { deleteClient, loadClients, saveClient } from "../services/clientService";
 import { UnauthorizedError } from "@/app/erros/unauthorized";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export function useClients() {
     const [clients, setClients] = useState<Client[]>([]);
@@ -23,7 +24,6 @@ export function useClients() {
                 router.push("/signin")
                 return;
             }
-
             setError("Erro ao buscar clientes")
         } finally {
             setIsLoading(false);
@@ -35,6 +35,7 @@ export function useClients() {
             const newClient = await saveClient(data);
             setClients((prev) => [...prev, newClient]);
             setError(null);
+            toast.success("Cliente criado com sucesso");
             return newClient;
         } catch (err: any) {
             setError("Erro ao criar cliente");
@@ -47,8 +48,8 @@ export function useClients() {
             await deleteClient(id);
             setClients((prev) => prev.filter((c) => c.id !== id));
             setError(null);
+            toast.success("Cliente deletado com sucesso");
         } catch (err: any) {
-            setError("Erro ao criar cliente");
             throw err;
         }
     }

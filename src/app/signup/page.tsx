@@ -46,7 +46,6 @@ export default function RegisterForm() {
       };
 
       const authRes = await api.post('/users/auth', authPayload)
-
       const token = JSON.stringify(authRes.data?.token)
       localStorage.setItem("token", token);
       router.push("/clients")

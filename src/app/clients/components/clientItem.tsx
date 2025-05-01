@@ -1,7 +1,5 @@
 import React from 'react';
-import { User, MoreVertical } from 'lucide-react';
-
-
+import { User, MoreVertical, SquarePen, Trash2 } from 'lucide-react';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -18,7 +16,7 @@ export default function ClientItem({ client, onDeleteClient }: { client: Client,
             className="flex items-center py-1 px-3 bg-[var(--card-foreground)] rounded-md border border-gray-200 shadow-sm hover:shadow-md w-full"
         >
             <div
-                className="w-6 h-6 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0 bg-[#0065FF]/10"
+                className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 bg-[#0065FF]/10"
             >
                 <User className="h-3 w-3 text-[#0065FF]" />
             </div>
@@ -34,14 +32,14 @@ export default function ClientItem({ client, onDeleteClient }: { client: Client,
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-36">
                         <DropdownMenuItem className="cursor-pointer">
-                            Update
+                            <SquarePen />Editar
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => onDeleteClient(client.id)} className="cursor-pointer text-red-500">
-                            Delete
+                            <Trash2 />Deletar
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
-        </div>
+        </div >
     );
 }

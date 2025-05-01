@@ -16,6 +16,7 @@ import { useClients } from "./hooks/useClient";
 import ClientItem from "./components/clientItem";
 import { Client } from "./types/clientType";
 
+
 export default function ClientsInteface() {
   const { clients, isLoading, error, createClient, removeClient } = useClients()
   const [darkMode, setDarkMode] = useState(false);

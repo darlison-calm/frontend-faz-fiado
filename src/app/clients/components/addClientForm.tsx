@@ -3,8 +3,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+
 import { useForm } from "react-hook-form";
 import { Client, CreateClientData } from "../types/clientType";
+import { BadRequestError } from "@/app/erros/badRequest";
+import { toast } from "sonner"
 
 interface ClienteModalProps {
   open: boolean;
@@ -17,7 +20,8 @@ export default function AddClientForm({ open, setOpen, onCreateClient }: Cliente
     register,
     formState: { errors },
     reset,
-    handleSubmit
+    handleSubmit,
+    setError
   } = useForm<CreateClientData>({
     defaultValues: {
       fullName: "",
@@ -27,18 +31,25 @@ export default function AddClientForm({ open, setOpen, onCreateClient }: Cliente
     }
   });
 
-  const onSubmit = (data: CreateClientData) => {
+  const onSubmit = async (data: CreateClientData) => {
     try {
-      onCreateClient(data);
+      await onCreateClient(data);
       closeForm();
     } catch (error) {
-      console.error("Erro ao criar cliente:", error);
+      if (error instanceof BadRequestError) {
+        const serverErrors = error.response.data;
+        Object.entries(serverErrors).forEach(([field, mes]) => {
+          setError(field as keyof CreateClientData, { type: 'server', message: mes as string });
+        });
+      } else {
+        closeForm();
+      }
     }
-    closeForm();
+
   }
   const closeForm = () => {
     setOpen(false);
-    reset()
+    reset();
   }
   return (
     <Dialog open={open} onOpenChange={setOpen}>

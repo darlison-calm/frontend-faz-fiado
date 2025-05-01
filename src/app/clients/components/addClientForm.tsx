@@ -4,36 +4,36 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
+import { Client, CreateClientData } from "../types/clientType";
 
 interface ClienteModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
+  onCreateClient: (data: CreateClientData) => Promise<Client>;
 }
 
-interface FormValues {
-  name: string
-  phoneNumber: string
-  address: string
-  observation: string
-}
-
-export default function AddClientForm({ open, setOpen }: ClienteModalProps) {
+export default function AddClientForm({ open, setOpen, onCreateClient }: ClienteModalProps) {
   const {
     register,
     formState: { errors },
     reset,
     handleSubmit
-  } = useForm<FormValues>({
+  } = useForm<CreateClientData>({
     defaultValues: {
-      name: "",
+      fullName: "",
       phoneNumber: "",
       address: "",
       observation: ""
     }
   });
 
-  const onSubmit = (data: FormValues) => {
-    console.log(data);
+  const onSubmit = (data: CreateClientData) => {
+    try {
+      onCreateClient(data);
+      closeForm();
+    } catch (error) {
+      console.error("Erro ao criar cliente:", error);
+    }
     closeForm();
   }
   const closeForm = () => {
@@ -51,15 +51,15 @@ export default function AddClientForm({ open, setOpen }: ClienteModalProps) {
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 flex-1 flex flex-col">
           <div className="grid gap-2">
-            <Label htmlFor="name" className={errors.name ? "text-red-500" : ""}>Nome*</Label>
+            <Label htmlFor="name" className={errors.fullName ? "text-red-500" : ""}>Nome*</Label>
             <Input
               id="name"
-              {...register("name", { required: "Nome é obrigatório" })}
-              className={errors.name ? "border-red-500" : ""}
+              {...register("fullName", { required: "Nome é obrigatório" })}
+              className={errors.fullName ? "border-red-500" : ""}
               placeholder="Digite o nome"
             />
-            {errors.name && (
-              <p className="text-red-500 text-sm">{errors.name.message as string}</p>
+            {errors.fullName && (
+              <p className="text-red-500 text-sm">{errors.fullName.message as string}</p>
             )}
           </div>
 

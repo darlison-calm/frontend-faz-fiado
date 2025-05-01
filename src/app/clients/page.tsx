@@ -8,43 +8,24 @@ import {
   Sun,
   Moon,
 } from "lucide-react"
-import { useEffect, useState } from "react";
-import ClientList from "./components/clientList";
+import { useState } from "react";
 import FilterOptions from "./components/filterOptions";
 import AddClientForm from "./components/addClientForm";
 import AddClientButton from "./components/addClientButton";
+import { useClients } from "./hooks/useClient";
+import ClientItem from "./components/clientItem";
 import { Client } from "./types/clientType";
-import { fetchClients } from "./clientSerivce";
-import { useRouter } from "next/navigation";
 
 export default function ClientsInteface() {
+  const { clients, isLoading, error, createClient, removeClient } = useClients()
   const [darkMode, setDarkMode] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [hideValues, setHideValues] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
-  const [clientsData, setClientsData] = useState<Client[]>([]);
-  const [error, setError] = useState<string | null>(null);
-
-  const router = useRouter();
   const total = 900;
 
   function changeColorMode() {
     setDarkMode(prev => !prev)
   }
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    fetchClients({ signal: controller.signal, router })
-      .then((data) => {
-        setIsLoading(true);
-        setClientsData(data);
-      })
-      .catch((err) => setError(err.message))
-      .finally(() => setIsLoading(false));
-
-    return () => controller.abort();
-  }, []);
 
   return (
     <div className="min-h-dvh">
@@ -95,10 +76,14 @@ export default function ClientsInteface() {
           <FilterOptions />
         </div>
         {isLoading && <div>Carregando.............</div>}
-        <ClientList clients={clientsData} />
+        <div className="space-y-2">
+          {clients.map((client: Client) => (
+            <ClientItem onDeleteClient={removeClient} key={client.id} client={client} />
+          ))}
+        </div>
       </div>
       <AddClientButton onClick={() => setModalOpen(true)} />
-      <AddClientForm open={isModalOpen} setOpen={setModalOpen} />
+      <AddClientForm open={isModalOpen} onCreateClient={createClient} setOpen={setModalOpen} />
     </div>
   );
 }

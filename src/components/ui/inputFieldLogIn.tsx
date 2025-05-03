@@ -1,5 +1,5 @@
 import { InputFieldProps } from "@/types/formTypes";
-import { TAuthUSer} from "@/users/types/userTypes";
+import { TAuthUSer } from "@/users/types/userTypes";
 
 
 export default function InputField({ id, name, type, label, register, errors }: InputFieldProps<TAuthUSer>) {
@@ -15,7 +15,7 @@ export default function InputField({ id, name, type, label, register, errors }: 
         />
         <label
           htmlFor={id}
-          className={`absolute text-sm duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-focus:px-2'text-gray-500 peer-focus:text-blue-500'
+          className={`absolute text-sm duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-[var(--background)] px-2 peer-focus:px-2'text-gray-500 peer-focus:text-blue-500'
           peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-85 peer-focus:-translate-y-4 left-1 dark:bg-gray-900 dark:text-gray-400`}
         >
           {label}

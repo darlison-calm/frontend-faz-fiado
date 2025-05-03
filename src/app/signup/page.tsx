@@ -9,16 +9,14 @@ import { useRouter } from "next/navigation";
 import api from "@/lib/axiosInstance";
 import { ConflictError } from "../erros/conflict";
 import { BadRequestError } from "../erros/badRequest";
-
-
+import { LoadingOverlay } from "@/components/ui/loadingOverlay";
 
 export default function RegisterForm() {
   const router = useRouter();
-
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isLoading },
     setError
   } = useForm<TCreateUserSchema>({
     resolver: zodResolver(createUserSchema),
@@ -67,6 +65,7 @@ export default function RegisterForm() {
 
   return (
     <div className="w-full flex justify-center mt-4">
+      {isLoading && <LoadingOverlay />}
       <div className="w-5/6 max-w-sm bg-white shadow-lg rounded-2xl p-6">
         <h1 className="text-center mb-4 text-xl">Cadastre-se</h1>
         <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>

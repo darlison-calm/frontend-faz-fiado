@@ -2,6 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import InputField from "@/components/ui/inputFieldLogIn";
+import { LoadingOverlay } from "@/components/ui/loadingOverlay";
+import { LoadingSpinner } from "@/components/ui/loadingSpinner";
 import api from "@/lib/axiosInstance";
 import { TAuthUSer } from "@/users/types/userTypes";
 import { useRouter } from "next/navigation";
@@ -12,7 +14,7 @@ export default function SignInForm() {
     const {
         register,
         handleSubmit,
-        formState: { errors, isSubmitting },
+        formState: { errors, isSubmitting, isLoading },
     } = useForm<TAuthUSer>();
 
     const onSubmit = async (formData: TAuthUSer) => {
@@ -23,7 +25,8 @@ export default function SignInForm() {
     }
 
     return (
-        <div className="w-5/6 mt-2 max-w-sm mx-auto">
+        <div className="flex items-center justify-center min-h-screen">
+            {isLoading && <LoadingOverlay />}
             <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
                 <InputField
                     id="loginMethod_input"
@@ -42,7 +45,7 @@ export default function SignInForm() {
                     errors={errors}
                 />
 
-                <Button className="w-full bg-primary " disabled={isSubmitting} type="submit">
+                <Button className="w-full bg-[var(--highlight)]" disabled={isSubmitting} type="submit">
                     {isSubmitting ? "Carregando" : "Entrar"}
                 </Button>
             </form>

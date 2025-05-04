@@ -2,7 +2,7 @@
 
 import api from "@/lib/axiosInstance";
 import { TAuthUSer } from "@/users/types/userTypes";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 

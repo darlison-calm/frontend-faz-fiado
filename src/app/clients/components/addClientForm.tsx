@@ -5,14 +5,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 import { useForm } from "react-hook-form";
-import { Client, CreateClientData } from "../types/clientType";
+import { Client, ClientFormData } from "../types/clientType";
 import { BadRequestError } from "@/app/erros/badRequest";
-import { toast } from "sonner"
 
 interface ClienteModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
-  onCreateClient: (data: CreateClientData) => Promise<Client>;
+  onCreateClient: (data: ClientFormData) => Promise<Client>;
 }
 
 export default function AddClientForm({ open, setOpen, onCreateClient }: ClienteModalProps) {
@@ -22,7 +21,7 @@ export default function AddClientForm({ open, setOpen, onCreateClient }: Cliente
     reset,
     handleSubmit,
     setError
-  } = useForm<CreateClientData>({
+  } = useForm<ClientFormData>({
     defaultValues: {
       fullName: "",
       phoneNumber: "",
@@ -31,7 +30,7 @@ export default function AddClientForm({ open, setOpen, onCreateClient }: Cliente
     }
   });
 
-  const onSubmit = async (data: CreateClientData) => {
+  const onSubmit = async (data: ClientFormData) => {
     try {
       await onCreateClient(data);
       closeForm();
@@ -39,7 +38,7 @@ export default function AddClientForm({ open, setOpen, onCreateClient }: Cliente
       if (error instanceof BadRequestError) {
         const serverErrors = error.response.data;
         Object.entries(serverErrors).forEach(([field, mes]) => {
-          setError(field as keyof CreateClientData, { type: 'server', message: mes as string });
+          setError(field as keyof ClientFormData, { type: 'server', message: mes as string });
         });
       } else {
         closeForm();

@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import InputField from "@/components/ui/inputFieldLogIn";
 import { LoadingOverlay } from "@/components/ui/loadingOverlay";
-import { useLoginForm } from "./useLoginForm";
+import { useLoginForm } from "./hooks/useLoginForm";
 
 export default function SignInForm() {
     const { formMethods, isLoading, onSubmit } = useLoginForm()
@@ -33,7 +33,6 @@ export default function SignInForm() {
                     register={register}
                     errors={errors}
                 />
-
                 <Button className="w-full bg-[var(--highlight)]" disabled={isSubmitting} type="submit">
                     {isSubmitting ? "Carregando" : "Entrar"}
                 </Button>

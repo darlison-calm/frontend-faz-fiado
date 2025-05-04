@@ -8,9 +8,14 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Client } from '../types/clientType';
 
+interface ClientItemProps {
+    client: Client;
+    onDeleteClient: (id: number) => void;
+    onEditClient: (id: number) => void;
+}
 
 
-export default function ClientItem({ client, onDeleteClient }: { client: Client, onDeleteClient: any }) {
+export default function ClientItem({ client, onDeleteClient, onEditClient }: ClientItemProps) {
     return (
         <div
             className="flex items-center py-1 px-3 bg-[var(--card-foreground)] rounded-md border border-gray-200 shadow-sm hover:shadow-md w-full"
@@ -31,7 +36,7 @@ export default function ClientItem({ client, onDeleteClient }: { client: Client,
                         </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-36">
-                        <DropdownMenuItem className="cursor-pointer">
+                        <DropdownMenuItem onClick={() => onEditClient(client.id)} className="cursor-pointer">
                             <SquarePen />Editar
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => onDeleteClient(client.id)} className="cursor-pointer text-red-500">

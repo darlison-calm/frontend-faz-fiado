@@ -76,6 +76,5 @@ export default function RegisterForm() {
         <p className="mt-4 text-sm">Já tem uma conta? <span onClick={goToLoginPage} className="cursor-pointer font-medium underline text-[var(--highlight)]">Clique aqui</span></p>
       </div>
     </div>
-
   );
 }

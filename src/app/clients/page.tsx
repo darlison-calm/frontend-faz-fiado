@@ -8,24 +8,33 @@ import {
   Sun,
   Moon,
 } from "lucide-react"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FilterOptions from "./components/filterOptions";
 import AddClientForm from "./components/addClientForm";
 import AddClientButton from "./components/addClientButton";
 import { useClients } from "./hooks/useClient";
 import ClientItem from "./components/clientItem";
 import { Client } from "./types/clientType";
+import EditClientForm from "./components/EditClientForm";
 
 
-export default function ClientsInteface() {
-  const { clients, isLoading, error, createClient, removeClient } = useClients()
+export default function ClientsPage() {
+  const { clients, isLoading, createClient, removeClient, editClient } = useClients()
   const [darkMode, setDarkMode] = useState(false);
   const [hideValues, setHideValues] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isEditModalOpen, setEditModalOpen] = useState(false);
+  const [editClientId, setEditClientId] = useState<number>(0);
+
   const total = 900;
 
   function changeColorMode() {
     setDarkMode(prev => !prev)
+  }
+
+  function handleEditClient(id: number) {
+    setEditClientId(id);
+    setEditModalOpen(true);
   }
 
   return (
@@ -79,12 +88,13 @@ export default function ClientsInteface() {
         {isLoading && <div>Carregando.............</div>}
         <div className="space-y-2">
           {clients.map((client: Client) => (
-            <ClientItem onDeleteClient={removeClient} key={client.id} client={client} />
+            <ClientItem onDeleteClient={removeClient} key={client.id} client={client} onEditClient={handleEditClient} />
           ))}
         </div>
       </div>
       <AddClientButton onClick={() => setModalOpen(true)} />
       <AddClientForm open={isModalOpen} onCreateClient={createClient} setOpen={setModalOpen} />
+      <EditClientForm open={isEditModalOpen} setOpen={setEditModalOpen} clientId={editClientId} onEditClient={editClient} />
     </div>
   );
 }

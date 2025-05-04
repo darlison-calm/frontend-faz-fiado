@@ -2,72 +2,26 @@
 
 import { Button } from "@/components/ui/button";
 import InputField from "@/components/ui/inputField";
-import { createUserSchema, TAuthUSer, TCreateUser, TCreateUserSchema } from "@/users/types/userTypes";
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { useRouter } from "next/navigation";
-import api from "@/lib/axiosInstance";
-import { ConflictError } from "../erros/conflict";
-import { BadRequestError } from "../erros/badRequest";
-
-
+import { LoadingOverlay } from "@/components/ui/loadingOverlay";
+import { useRegisterForm } from "./hooks/useRegisterForm";
 
 export default function RegisterForm() {
-  const router = useRouter();
+  const {
+    formMethods,
+    onSubmit,
+    goToLoginPage,
+    isLoading
+  } = useRegisterForm();
 
   const {
     register,
-    handleSubmit,
     formState: { errors, isSubmitting },
-    setError
-  } = useForm<TCreateUserSchema>({
-    resolver: zodResolver(createUserSchema),
-    mode: "onBlur",
-    reValidateMode: "onChange"
-  });
-
-  async function onSubmit(formData: TCreateUserSchema) {
-    try {
-      const { phoneNumber: originalPhoneNumber, ...otherFormData } = formData;
-
-      const createUserPayload: TCreateUser = {
-        ...otherFormData,
-        phoneNumber: {
-          value: `+55${originalPhoneNumber}`,
-          locale: "BR"
-        }
-      }
-
-      await api.post('/users/registration', createUserPayload);
-
-      const authPayload: TAuthUSer = {
-        loginMethod: formData.email,
-        password: formData.password,
-      };
-
-      const authRes = await api.post('/users/auth', authPayload)
-
-      const token = JSON.stringify(authRes.data?.token)
-      localStorage.setItem("token", token);
-      router.push("/clients")
-    } catch (error: any) {
-      if (error instanceof ConflictError || error instanceof BadRequestError) {
-        const serverErrors = error.response.data;
-        Object.entries(serverErrors).forEach(([field, mes]) => {
-          setError(field as keyof TCreateUserSchema, { type: 'server', message: mes as string });
-        });
-      }
-      const errorMessage = error instanceof Error ? error.message : "Ocorreu um erro inesperado.";
-      console.log(errorMessage);
-    }
-  }
-
-  const goToLoginPage = () => {
-    router.push("/signin");
-  }
+    handleSubmit
+  } = formMethods;
 
   return (
     <div className="w-full flex justify-center mt-4">
+      {isLoading && <LoadingOverlay />}
       <div className="w-5/6 max-w-sm bg-white shadow-lg rounded-2xl p-6">
         <h1 className="text-center mb-4 text-xl">Cadastre-se</h1>
         <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
@@ -122,6 +76,5 @@ export default function RegisterForm() {
         <p className="mt-4 text-sm">Já tem uma conta? <span onClick={goToLoginPage} className="cursor-pointer font-medium underline text-[var(--highlight)]">Clique aqui</span></p>
       </div>
     </div>
-
   );
 }

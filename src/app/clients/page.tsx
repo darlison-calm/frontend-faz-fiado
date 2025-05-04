@@ -9,42 +9,33 @@ import {
   Moon,
 } from "lucide-react"
 import { useEffect, useState } from "react";
-import ClientList from "./components/clientList";
-import FilterOptions from "./components/filterOptions";
-import AddClientForm from "./components/addClientForm";
-import AddClientButton from "./components/addClientButton";
+import FilterOptions from "./components/FilterOptions";
+import AddClientForm from "./components/AddClientForm";
+import AddClientButton from "./components/AddClientButton";
+import { useClients } from "./hooks/useClient";
+import ClientItem from "./components/ClientItem";
 import { Client } from "./types/clientType";
-import { fetchClients } from "./clientSerivce";
-import { useRouter } from "next/navigation";
+import EditClientForm from "./components/EditClientForm";
 
-export default function ClientsInteface() {
+
+export default function ClientsPage() {
+  const { clients, isLoading, createClient, removeClient, editClient } = useClients()
   const [darkMode, setDarkMode] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [hideValues, setHideValues] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
-  const [clientsData, setClientsData] = useState<Client[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const [isEditModalOpen, setEditModalOpen] = useState(false);
+  const [editClientId, setEditClientId] = useState<number>(0);
 
-  const router = useRouter();
   const total = 900;
 
   function changeColorMode() {
     setDarkMode(prev => !prev)
   }
 
-  useEffect(() => {
-    const controller = new AbortController();
-
-    fetchClients({ signal: controller.signal, router })
-      .then((data) => {
-        setIsLoading(true);
-        setClientsData(data);
-      })
-      .catch((err) => setError(err.message))
-      .finally(() => setIsLoading(false));
-
-    return () => controller.abort();
-  }, []);
+  function handleEditClient(id: number) {
+    setEditClientId(id);
+    setEditModalOpen(true);
+  }
 
   return (
     <div className="min-h-dvh">
@@ -95,10 +86,15 @@ export default function ClientsInteface() {
           <FilterOptions />
         </div>
         {isLoading && <div>Carregando.............</div>}
-        <ClientList clients={clientsData} />
+        <div className="space-y-2">
+          {clients.map((client: Client) => (
+            <ClientItem onDeleteClient={removeClient} key={client.id} client={client} onEditClient={handleEditClient} />
+          ))}
+        </div>
       </div>
       <AddClientButton onClick={() => setModalOpen(true)} />
-      <AddClientForm open={isModalOpen} setOpen={setModalOpen} />
+      <AddClientForm open={isModalOpen} onCreateClient={createClient} setOpen={setModalOpen} />
+      <EditClientForm open={isEditModalOpen} setOpen={setEditModalOpen} clientId={editClientId} onEditClient={editClient} />
     </div>
   );
 }

@@ -9,11 +9,11 @@ import {
   Moon,
 } from "lucide-react"
 import { useEffect, useState } from "react";
-import FilterOptions from "./components/filterOptions";
-import AddClientForm from "./components/addClientForm";
-import AddClientButton from "./components/addClientButton";
+import FilterOptions from "./components/FilterOptions";
+import AddClientForm from "./components/AddClientForm";
+import AddClientButton from "./components/AddClientButton";
 import { useClients } from "./hooks/useClient";
-import ClientItem from "./components/clientItem";
+import ClientItem from "./components/ClientItem";
 import { Client } from "./types/clientType";
 import EditClientForm from "./components/EditClientForm";
 

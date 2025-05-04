@@ -1,5 +1,5 @@
 import { Calendar, ArrowUpAZ, ArrowDownZA, Filter } from "lucide-react";
-import ButtonWithIcon from "./buttonWithIcon";
+import ButtonWithIcon from "./ButtonWithIcon";
 import { useState } from "react";
 
 export default function FilterOptions() {

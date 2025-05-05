@@ -1,5 +1,5 @@
 'use client'
-import { createUserSchema, TAuthUSer, TCreateUser, TCreateUserSchema } from "@/users/types/userTypes";
+import { createUserSchema, TAuthUSer, TCreateUser, TCreateUserSchema } from "@/types/userTypes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";

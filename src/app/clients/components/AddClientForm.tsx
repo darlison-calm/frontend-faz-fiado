@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 import { useForm } from "react-hook-form";
-import { Client, ClientFormData } from "../types/clientType";
+import { Client, ClientFormData } from "../../../types/clientType";
 import { BadRequestError } from "@/app/erros/badRequest";
 
 interface ClienteModalProps {

@@ -14,12 +14,12 @@ import AddClientForm from "./components/AddClientForm";
 import AddClientButton from "./components/AddClientButton";
 import { useClients } from "./hooks/useClient";
 import ClientItem from "./components/ClientItem";
-import { Client } from "./types/clientType";
+import { Client } from "../../types/clientType";
 import EditClientForm from "./components/EditClientForm";
-
+import { LoadingOverlay } from "@/components/ui/loadingOverlay";
 
 export default function ClientsPage() {
-  const { clients, isLoading, createClient, removeClient, editClient } = useClients()
+  const { clients, isLoading, createClient, removeClient, editClient, goToClientDetailsPage } = useClients()
   const [darkMode, setDarkMode] = useState(false);
   const [hideValues, setHideValues] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
@@ -34,6 +34,12 @@ export default function ClientsPage() {
   function handleEditClient(id: number) {
     setSelectedClientId(id);
     setEditModalOpen(true);
+  }
+
+  if (isLoading) {
+    return (
+      <LoadingOverlay />
+    )
   }
 
   return (
@@ -84,12 +90,11 @@ export default function ClientsPage() {
           </div>
           <FilterOptions />
         </div>
-        {isLoading && <div>Carregando.............</div>}
-        <div className="space-y-2">
+        <ul className="space-y-2">
           {clients.map((client: Client) => (
-            <ClientItem onDeleteClient={removeClient} key={client.id} client={client} onEditClient={handleEditClient} />
+            <ClientItem onDeleteClient={removeClient} key={client.id} client={client} onEditClient={handleEditClient} goToDetailsPage={goToClientDetailsPage} />
           ))}
-        </div>
+        </ul>
       </div>
       <AddClientButton onClick={() => setModalOpen(true)} />
       <AddClientForm open={isModalOpen} onCreateClient={createClient} setOpen={setModalOpen} />

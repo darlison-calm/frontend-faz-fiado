@@ -1,5 +1,5 @@
 import { InputFieldProps } from "@/types/formTypes";
-import { TCreateUserSchema} from "@/users/types/userTypes";
+import { TCreateUserSchema } from "@/types/userTypes";
 
 export default function InputField({ id, name, type, label, register, errors }: InputFieldProps<TCreateUserSchema>) {
   return (

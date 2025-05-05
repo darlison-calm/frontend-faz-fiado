@@ -1,5 +1,5 @@
 import { InputFieldProps } from "@/types/formTypes";
-import { TAuthUSer } from "@/users/types/userTypes";
+import { TAuthUSer } from "@/types/userTypes";
 
 
 export default function InputField({ id, name, type, label, register, errors }: InputFieldProps<TAuthUSer>) {

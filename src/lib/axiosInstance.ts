@@ -36,6 +36,9 @@ const onRequestError = (error: AxiosError): Promise<AxiosError> => {
 }
 
 const onResponseError = (error: AxiosError): Promise<AxiosError> => {
+    if (error.name === "CanceledError") {
+        return Promise.reject(error);
+    }
     console.error(`[response error] [${JSON.stringify(error)}]`);
     const status = error.response?.status;
     switch (status) {

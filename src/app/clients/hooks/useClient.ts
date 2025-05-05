@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Client, ClientFormData } from "../types/clientType";
+import { Client, ClientFormData } from "../../../types/clientType";
 import { deleteClient, loadClients, saveClient, updateClient } from "../services/clientService";
 import { UnauthorizedError } from "@/app/erros/unauthorized";
 import { useRouter } from "next/navigation";
@@ -78,6 +78,10 @@ export function useClients() {
         }
     }, []);
 
+    const goToClientDetailsPage = (id: number) => {
+        router.push(`/clients/${id}`)
+    }
+
 
     return {
         clients,
@@ -86,6 +90,7 @@ export function useClients() {
         createClient,
         removeClient,
         getClients,
-        editClient
+        editClient,
+        goToClientDetailsPage
     };
 }

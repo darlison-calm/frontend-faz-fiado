@@ -6,18 +6,19 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Client } from '../types/clientType';
+import { Client } from '../../../types/clientType';
 
 interface ClientItemProps {
     client: Client;
     onDeleteClient: (id: number) => void;
     onEditClient: (id: number) => void;
+    goToDetailsPage: (id: number) => void;
 }
 
 
-export default function ClientItem({ client, onDeleteClient, onEditClient }: ClientItemProps) {
+export default function ClientItem({ client, onDeleteClient, onEditClient, goToDetailsPage }: ClientItemProps) {
     return (
-        <div
+        <li onClick={() => goToDetailsPage(client.id)}
             className="flex items-center py-1 px-3 bg-[var(--card-foreground)] rounded-md border border-gray-200 shadow-sm hover:shadow-md w-full"
         >
             <div
@@ -45,6 +46,6 @@ export default function ClientItem({ client, onDeleteClient, onEditClient }: Cli
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
-        </div >
+        </li>
     );
 }

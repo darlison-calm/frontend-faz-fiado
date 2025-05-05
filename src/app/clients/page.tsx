@@ -8,7 +8,7 @@ import {
   Sun,
   Moon,
 } from "lucide-react"
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import FilterOptions from "./components/FilterOptions";
 import AddClientForm from "./components/AddClientForm";
 import AddClientButton from "./components/AddClientButton";
@@ -24,8 +24,7 @@ export default function ClientsPage() {
   const [hideValues, setHideValues] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
-  const [editClientId, setEditClientId] = useState<number>(0);
-
+  const [selectedClientId, setSelectedClientId] = useState<number>(0);
   const total = 900;
 
   function changeColorMode() {
@@ -33,7 +32,7 @@ export default function ClientsPage() {
   }
 
   function handleEditClient(id: number) {
-    setEditClientId(id);
+    setSelectedClientId(id);
     setEditModalOpen(true);
   }
 
@@ -94,7 +93,7 @@ export default function ClientsPage() {
       </div>
       <AddClientButton onClick={() => setModalOpen(true)} />
       <AddClientForm open={isModalOpen} onCreateClient={createClient} setOpen={setModalOpen} />
-      <EditClientForm open={isEditModalOpen} setOpen={setEditModalOpen} clientId={editClientId} onEditClient={editClient} />
+      <EditClientForm open={isEditModalOpen} setOpen={setEditModalOpen} clientId={selectedClientId} onEditClient={editClient} />
     </div>
   );
 }

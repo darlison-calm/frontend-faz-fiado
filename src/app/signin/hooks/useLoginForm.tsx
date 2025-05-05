@@ -20,14 +20,21 @@ export const useLoginForm = () => {
             localStorage.setItem("token", JSON.stringify(token));
             router.push("/clients")
         } catch (error) {
+            throw error;
+        } finally {
             setLoading(false);
         }
+    }
+
+    const goToSignUp = () => {
+        router.push("/signup");
     }
 
     return {
         formMethods,
         isLoading,
-        onSubmit
+        onSubmit,
+        goToSignUp
     }
 
 }

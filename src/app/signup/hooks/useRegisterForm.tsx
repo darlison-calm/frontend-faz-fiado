@@ -40,7 +40,6 @@ export const useRegisterForm = () => {
             const token = JSON.stringify(authRes.data?.token)
             localStorage.setItem("token", token);
             router.push("/clients")
-            setLoading(false);
         } catch (error: any) {
             if (error instanceof ConflictError || error instanceof BadRequestError) {
                 const serverErrors = error.response.data;
@@ -50,6 +49,7 @@ export const useRegisterForm = () => {
             }
             const errorMessage = error instanceof Error ? error.message : "Ocorreu um erro inesperado.";
             console.log(errorMessage);
+        } finally {
             setLoading(false);
         }
     }

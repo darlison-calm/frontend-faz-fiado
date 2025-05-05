@@ -30,14 +30,14 @@ export default function EditClientForm({ open, setOpen, clientId, onEditClient }
     }
 
     const submitForm = async (data: ClientFormData) => {
-        onEditClient(clientId, data);
+        await onEditClient(clientId, data);
         closeForm();
     }
 
 
     useEffect(() => {
         const fetchClient = async () => {
-            if (clientId > 0) {
+            if (clientId > 0 && open) {
                 try {
                     const data = await loadClient(clientId);
                     reset({
@@ -53,7 +53,7 @@ export default function EditClientForm({ open, setOpen, clientId, onEditClient }
         };
 
         fetchClient();
-    }, [clientId]);
+    }, [clientId, open]);
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>

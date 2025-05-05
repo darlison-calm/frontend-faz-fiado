@@ -25,7 +25,7 @@ export function useClients() {
                 router.push("/signin")
                 return;
             }
-            setError("Erro ao buscar clientes")
+            toast.error("Erro ao buscar clientes")
         } finally {
             setIsLoading(false);
         }

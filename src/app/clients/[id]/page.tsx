@@ -1,22 +1,12 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import {
-    ArrowLeft,
-    Phone,
-    MapPin,
-    Eye,
-    EyeOff,
-    Plus,
-    Search,
-    MoreHorizontal,
-} from "lucide-react"
-import { useParams } from 'next/navigation'
-import { Client } from "../../../types/clientType"
+import { ArrowLeft, Phone, MapPin, Eye, EyeOff, Plus, Search, MoreHorizontal } from "lucide-react"
+import { useParams } from "next/navigation"
+import type { Client } from "../../../types/clientType"
 import { loadClient } from "../services/clientService"
 import { LoadingOverlay } from "@/components/ui/loadingOverlay"
-import { useRouter } from 'next/navigation';
-
+import { useRouter } from "next/navigation"
 
 interface Transaction {
     id: string
@@ -31,16 +21,12 @@ interface Transaction {
     paidAmount?: number
 }
 
-interface ClientDetailProps {
-    client: Client
-    onBack: () => void
-}
 
 export default function ClientDetail() {
     const [hideValues, setHideValues] = useState(false)
     const [client, setClient] = useState<Client>()
     const { id } = useParams<{ id: string }>()
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false)
     const router = useRouter()
     useEffect(() => {
         if (id) {
@@ -93,32 +79,41 @@ export default function ClientDetail() {
     if (!client) return null
 
     if (isLoading) {
-        return (
-            <LoadingOverlay />
-        )
+        return <LoadingOverlay />
     }
     return (
-        <div className="flex flex-col h-screen bg-[#F7F9FC]">
-            <div className="bg-gradient-to-r from-[#0057DB] to-[#0065FF] text-white">
+        <div className="flex flex-col h-screen">
+            <div className="bg-[var(--highlight)] text-white pb-3">
                 <div className="flex justify-between items-center px-4 pt-3 pb-2">
-                    <button onClick={() => router.back()} className="p-1.5 rounded-full hover:bg-white/10 transition-colors">
-                        <ArrowLeft className="h-5 w-5 text-white" />
+                    <div className="flex items-center gap-1">
+                        <button
+                            onClick={() => router.back()}
+                            className="rounded-full hover:bg-white/10 transition-colors mr-2"
+                        >
+                            <ArrowLeft className="h-5 w-5 text-white" />
+                        </button>
+                        <h1 className="text-2xl sm:text-2xl font-bold">{client.fullName}</h1>
+                    </div>
+
+                    <button className="flex items-center text-white/80 text-xs" onClick={() => setHideValues(!hideValues)}>
+                        {hideValues ? (
+                            <>
+                                <Eye className="h-3.5 w-3.5 mr-1" />
+                                <span>Mostrar valores</span>
+                            </>
+                        ) : (
+                            <>
+                                <EyeOff className="h-3.5 w-3.5 mr-1" />
+                                <span className="font-bold">Ocultar valores</span>
+                            </>
+                        )}
                     </button>
                 </div>
 
                 <div className="px-4 pb-5 sm:pb-6">
                     <div className="flex flex-col sm:flex-row sm:items-start">
-                        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-3 sm:mb-0 sm:mr-4 flex-shrink-0 mx-auto sm:mx-0">
-                            <div className="w-12 h-12 rounded-full bg-[#0057DB]/20 flex flex-col items-center justify-center">
-                                <div className="w-6 h-6 rounded-full border-3 border-[#0065FF]"></div>
-                                <div className="w-8 h-1.5 mt-1 rounded-full border-1.5 border-[#0065FF]"></div>
-                            </div>
-                        </div>
-
                         <div className="flex-1 flex flex-col sm:flex-row sm:justify-between">
                             <div className="text-white text-center sm:text-left">
-                                <h1 className="text-xl sm:text-2xl font-medium">{client.fullName}</h1>
-
                                 {client.phoneNumber && (
                                     <div className="flex items-center mt-1 justify-center sm:justify-start">
                                         <Phone className="h-3.5 w-3.5 mr-1.5" />
@@ -140,35 +135,16 @@ export default function ClientDetail() {
 
                             <div className="mt-3 sm:mt-0 sm:ml-4 flex flex-col items-center sm:items-end sm:justify-start">
                                 <div className="text-center sm:text-right">
-                                    <p className="text-white/80 text-xs">Valor a receber</p>
-                                    <p className="text-2xl sm:text-3xl font-semibold text-white">
-                                        {hideValues ? "R$ ••••" : `R$500`}
-                                    </p>
+                                    <p className="text-white/80 text-xs font-bold">Valor a receber</p>
+                                    <p className="text-2xl sm:text-3xl font-bold text-white">{hideValues ? "R$ ••••" : `R$500`}</p>
                                 </div>
-
-                                <button
-                                    className="flex items-center text-white/80 text-xs mt-1"
-                                    onClick={() => setHideValues(!hideValues)}
-                                >
-                                    {hideValues ? (
-                                        <>
-                                            <Eye className="h-3.5 w-3.5 mr-1" />
-                                            <span>Mostrar valores</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <EyeOff className="h-3.5 w-3.5 mr-1" />
-                                            <span>Ocultar valores</span>
-                                        </>
-                                    )}
-                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div className="flex-1 bg-[#F7F9FC] rounded-t-3xl -mt-4 overflow-hidden flex flex-col">
+            <div className="flex-1 bg-[#F7F9FC] rounded-t-3xl -mt-6 flex flex-col">
                 <div className="p-3 sm:p-4 border-b border-[#E1E8F0]">
                     <h2 className="text-base sm:text-lg font-medium text-center text-[#2D3748] mb-3">Lançamentos</h2>
 
@@ -186,7 +162,7 @@ export default function ClientDetail() {
 
                 <div className="flex-1 overflow-y-auto">
                     {transactions.map((transaction) => (
-                        <div key={transaction.id} className="border-b border-[#E1E8F0] p-3 sm:p-4">
+                        <div key={transaction.id} className="border border-gray-200 p-3 sm:p-4">
                             <div className="flex justify-between items-start">
                                 <div>
                                     <div className="text-lg sm:text-xl font-medium text-[#0065FF]">

@@ -17,6 +17,11 @@ interface ClientItemProps {
 
 
 export default function ClientItem({ client, onDeleteClient, onEditClient, goToDetailsPage }: ClientItemProps) {
+    const handleDropDownAction = (e: React.MouseEvent, handler: (id: number) => void) => {
+        e.stopPropagation();
+        handler(client.id);
+    };
+
     return (
         <li onClick={() => goToDetailsPage(client.id)}
             className="flex items-center py-1 px-3 bg-[var(--card-foreground)] rounded-md border border-gray-200 shadow-sm hover:shadow-md w-full"
@@ -37,10 +42,10 @@ export default function ClientItem({ client, onDeleteClient, onEditClient, goToD
                         </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-36">
-                        <DropdownMenuItem onClick={() => onEditClient(client.id)} className="cursor-pointer">
+                        <DropdownMenuItem onClick={(e) => handleDropDownAction(e, onEditClient)} className="cursor-pointer">
                             <SquarePen />Editar
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => onDeleteClient(client.id)} className="cursor-pointer text-red-500">
+                        <DropdownMenuItem onClick={(e) => handleDropDownAction(e, onDeleteClient)} className="cursor-pointer text-red-500">
                             <Trash2 />Deletar
                         </DropdownMenuItem>
                     </DropdownMenuContent>

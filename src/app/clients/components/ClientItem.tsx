@@ -7,23 +7,23 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Client } from '../../../types/clientType';
+import { useClients } from '../hooks/useClient';
 
 interface ClientItemProps {
     client: Client;
     onDeleteClient: (id: number) => void;
     onEditClient: (id: number) => void;
-    goToDetailsPage: (id: number) => void;
 }
 
-
-export default function ClientItem({ client, onDeleteClient, onEditClient, goToDetailsPage }: ClientItemProps) {
+export default function ClientItem({ client, onDeleteClient, onEditClient }: ClientItemProps) {
     const handleDropDownAction = (e: React.MouseEvent, handler: (id: number) => void) => {
         e.stopPropagation();
         handler(client.id);
     };
+    const { goToClientDetailsPage } = useClients()
 
     return (
-        <li onClick={() => goToDetailsPage(client.id)}
+        <li onClick={() => goToClientDetailsPage(client.id)}
             className="flex items-center py-1 px-3 bg-[var(--card-foreground)] rounded-md border border-gray-200 shadow-sm hover:shadow-md w-full"
         >
             <div

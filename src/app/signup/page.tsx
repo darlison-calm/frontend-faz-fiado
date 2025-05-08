@@ -45,7 +45,7 @@ export default function RegisterForm() {
             id="phone_input"
             name="phoneNumber"
             type="tel"
-            label="Telefone"
+            label="Whatsapp"
             register={register}
             errors={errors}
           />

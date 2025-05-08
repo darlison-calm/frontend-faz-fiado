@@ -19,7 +19,6 @@ export async function loadClient(id: number): Promise<Client> {
     }
 }
 
-
 export async function saveClient(data: ClientFormData): Promise<Client> {
     const response = await api.post("/users/clients", data);
     return response.data;

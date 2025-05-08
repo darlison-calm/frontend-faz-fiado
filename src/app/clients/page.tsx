@@ -8,7 +8,7 @@ import {
   Sun,
   Moon,
 } from "lucide-react"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FilterOptions from "./components/FilterOptions";
 import AddClientForm from "./components/AddClientForm";
 import AddClientButton from "./components/AddClientButton";
@@ -18,8 +18,8 @@ import { Client } from "../../types/clientType";
 import EditClientForm from "./components/EditClientForm";
 import { LoadingOverlay } from "@/components/ui/loadingOverlay";
 
-export default function ClientsPage() {
-  const { clients, isLoading, createClient, removeClient, editClient, goToClientDetailsPage } = useClients()
+export default function ClientsListing() {
+  const { clients, isLoading, createClient, editClient, getClients, removeClient } = useClients()
   const [darkMode, setDarkMode] = useState(false);
   const [hideValues, setHideValues] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
@@ -27,7 +27,16 @@ export default function ClientsPage() {
   const [selectedClientId, setSelectedClientId] = useState<number>(0);
   const total = 900;
 
-  function changeColorMode() {
+  useEffect(() => {
+    const controller = new AbortController()
+    const signal = controller.signal;
+    getClients(signal);
+    return () => {
+      controller.abort()
+    }
+  }, []);
+
+  const changeColorMode = () => {
     setDarkMode(prev => !prev)
   }
 
@@ -79,7 +88,7 @@ export default function ClientsPage() {
 
       </div>
 
-      <div className="rounded-t-3xl -mt-8 px-4 pt-4 pb-4 space-y-6 bg-[var(--background)]">
+      <div className="rounded-t-3xl -mt-8 px-4 pt-4 pb-4 space-y-6 bg-[var(--background)] flex flex-col">
         <div className="space-y-4">
           {/* Barra de pesquisa */}
           <div className="relative">
@@ -90,11 +99,16 @@ export default function ClientsPage() {
           </div>
           <FilterOptions />
         </div>
-        <ul className="space-y-2">
-          {clients.map((client: Client) => (
-            <ClientItem onDeleteClient={removeClient} key={client.id} client={client} onEditClient={handleEditClient} goToDetailsPage={goToClientDetailsPage} />
-          ))}
-        </ul>
+        <div className="flex-1 overflow-y-auto  p-2">
+          <ul className="space-y-2">
+            {clients.map((client: Client) => (
+              <ClientItem
+                key={client.id} client={client}
+                onEditClient={handleEditClient}
+                onDeleteClient={removeClient}
+              />))}
+          </ul>
+        </div>
       </div>
       <AddClientButton onClick={() => setModalOpen(true)} />
       <AddClientForm open={isModalOpen} onCreateClient={createClient} setOpen={setModalOpen} />

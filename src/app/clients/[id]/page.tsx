@@ -87,7 +87,7 @@ export default function ClientDetail() {
                 <div className="flex justify-between items-center px-4 pt-3 pb-2">
                     <div className="flex items-center gap-1">
                         <button
-                            onClick={() => router.back()}
+                            onClick={() => router.push("/clients")}
                             className="rounded-full hover:bg-white/10 transition-colors mr-2"
                         >
                             <ArrowLeft className="h-5 w-5 text-white" />

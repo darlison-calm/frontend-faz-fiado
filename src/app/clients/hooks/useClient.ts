@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Client, ClientFormData } from "../../../types/clientType";
 import { deleteClient, loadClients, saveClient, updateClient } from "../services/clientService";
 import { UnauthorizedError } from "@/app/erros/unauthorized";
@@ -31,7 +31,7 @@ export function useClients() {
         }
     }
 
-    async function createClient(data: ClientFormData) {
+    const createClient = useCallback(async (data: ClientFormData) => {
         try {
             const newClient = await saveClient(data);
             setClients((prev) => [...prev, newClient]);
@@ -41,10 +41,9 @@ export function useClients() {
             toast.error("Erro ao criar cliente")
             throw err;
         }
-    }
+    }, []);
 
-
-    async function removeClient(id: number) {
+    const removeClient = useCallback(async (id: number) => {
         try {
             await deleteClient(id);
             setClients((prev) => prev.filter((c) => c.id !== id));
@@ -53,9 +52,9 @@ export function useClients() {
         } catch (err: any) {
             toast.error("Erro ao remover cliente")
         }
-    }
+    }, []);
 
-    async function editClient(id: number, clientData: ClientFormData) {
+    const editClient = useCallback(async (id: number, clientData: ClientFormData) => {
         try {
             const clientUpdated = await updateClient(id, clientData)
             setClients((prevClients) =>
@@ -67,7 +66,7 @@ export function useClients() {
         } catch (err: any) {
             toast.error("Erro ao editar cliente")
         }
-    }
+    }, []);
 
     useEffect(() => {
         const controller = new AbortController()
@@ -81,7 +80,6 @@ export function useClients() {
     const goToClientDetailsPage = (id: number) => {
         router.push(`/clients/${id}`)
     }
-
 
     return {
         clients,

@@ -1,15 +1,13 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { Client, ClientFormData } from "../../../types/clientType";
 import { deleteClient, loadClients, saveClient, updateClient } from "../services/clientService";
 import { UnauthorizedError } from "@/app/erros/unauthorized";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-
 export function useClients() {
     const [clients, setClients] = useState<Client[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
     const router = useRouter();
 
     async function getClients(signal: AbortSignal) {
@@ -47,7 +45,6 @@ export function useClients() {
         try {
             await deleteClient(id);
             setClients((prev) => prev.filter((c) => c.id !== id));
-            setError(null);
             toast.success("Cliente deletado");
         } catch (err: any) {
             toast.error("Erro ao remover cliente")
@@ -68,15 +65,6 @@ export function useClients() {
         }
     }, []);
 
-    useEffect(() => {
-        const controller = new AbortController()
-        const signal = controller.signal;
-        getClients(signal);
-        return () => {
-            controller.abort()
-        }
-    }, []);
-
     const goToClientDetailsPage = (id: number) => {
         router.push(`/clients/${id}`)
     }
@@ -84,7 +72,6 @@ export function useClients() {
     return {
         clients,
         isLoading,
-        error,
         createClient,
         removeClient,
         getClients,

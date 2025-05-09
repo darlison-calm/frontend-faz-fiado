@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { JSX, useState } from 'react';
 import { User, MoreVertical, SquarePen, Trash2 } from 'lucide-react';
 import {
     DropdownMenu,
@@ -7,16 +7,44 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Client } from '../../../types/clientType';
-import { useClients } from '../hooks/useClient';
 import DeleteClientDialog from './DeleteClientDialog';
 
 interface ClientItemProps {
     client: Client;
     onDeleteClient: (id: number) => void;
     onEditClient: (id: number) => void;
+    onViewDetails: (id: number) => void;
 }
-
-export default function ClientItem({ client, onDeleteClient, onEditClient }: ClientItemProps) {
+/**
+ * @component ClientItem
+ *
+ * @description
+ * Componente responsável por exibir um item da lista de clientes.
+ * Apresenta o nome do cliente e um menu de ações com opções de editar ou deletar.
+ * Também permite abrir os detalhes do cliente ao clicar no item.
+ *
+ * @param {ClientItemProps} props - Propriedades do componente.
+ * @param {Client} props.client - Objeto do cliente a ser exibido.
+ * @param {(id: number) => void} props.onDeleteClient - Função chamada ao confirmar exclusão do cliente.
+ * @param {(id: number) => void} props.onEditClient - Função chamada ao clicar na opção de editar.
+ * @param {(id: number) => void} props.onViewDetails - Função chamada ao clicar no item para ver detalhes.
+ *
+ * @state
+ * - `isDeleteDialogOpen` (boolean): controla a exibição do modal de confirmação para deletar.
+ *
+ * @events
+ * - Clique no item chama `onViewDetails`.
+ * - Ícone de lápis aciona `onEditClient`.
+ * - Ícone de lixeira abre o diálogo de confirmação e, ao confirmar, chama `onDeleteClient`.
+ *
+ * @dependencies
+ * - `lucide-react`: ícones (User, MoreVertical, SquarePen, Trash2)
+ * - `DropdownMenu`, `DropdownMenuContent`, `DropdownMenuItem`, `DropdownMenuTrigger`: menu suspenso de ações
+ * - `DeleteClientDialog`: componente de confirmação de exclusão
+ *
+ * @returns {JSX.Element} Item da lista de clientes com menu para remoção e edição
+ */
+export default function ClientItem({ client, onDeleteClient, onEditClient, onViewDetails }: ClientItemProps): JSX.Element {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
     const handleEdit = (e: React.MouseEvent) => {
@@ -30,10 +58,8 @@ export default function ClientItem({ client, onDeleteClient, onEditClient }: Cli
         setIsDeleteDialogOpen(false);
     }
 
-    const { goToClientDetailsPage } = useClients();
-
     return (
-        <li onClick={() => goToClientDetailsPage(client.id)}
+        <li onClick={() => onViewDetails(client.id)}
             className="flex items-center py-1 px-3 bg-[var(--card-foreground)] rounded-md border border-gray-200 shadow-sm hover:shadow-md w-full"
         >
             <div

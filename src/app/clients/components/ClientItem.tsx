@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { User, MoreVertical, SquarePen, Trash2 } from 'lucide-react';
 import {
     DropdownMenu,
@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Client } from '../../../types/clientType';
 import { useClients } from '../hooks/useClient';
+import DeleteClientDialog from './DeleteClientDialog';
 
 interface ClientItemProps {
     client: Client;
@@ -16,11 +17,20 @@ interface ClientItemProps {
 }
 
 export default function ClientItem({ client, onDeleteClient, onEditClient }: ClientItemProps) {
-    const handleDropDownAction = (e: React.MouseEvent, handler: (id: number) => void) => {
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+    const handleEdit = (e: React.MouseEvent) => {
         e.stopPropagation();
-        handler(client.id);
+        onEditClient(client.id);
     };
-    const { goToClientDetailsPage } = useClients()
+
+    const handleDelete = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        onDeleteClient(client.id);
+        setIsDeleteDialogOpen(false);
+    }
+
+    const { goToClientDetailsPage } = useClients();
 
     return (
         <li onClick={() => goToClientDetailsPage(client.id)}
@@ -37,20 +47,31 @@ export default function ClientItem({ client, onDeleteClient, onEditClient }: Cli
             <div className="flex items-center">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <button className="p-1 rounded-full hover:bg-gray-100">
+                        <button className="p-2 rounded-full hover:bg-gray-100">
                             <MoreVertical className="h-4 w-4 text-gray-400" />
                         </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-36">
-                        <DropdownMenuItem onClick={(e) => handleDropDownAction(e, onEditClient)} className="cursor-pointer">
+                        <DropdownMenuItem onClick={(e) => handleEdit(e)} className="cursor-pointer">
                             <SquarePen />Editar
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={(e) => handleDropDownAction(e, onDeleteClient)} className="cursor-pointer text-red-500">
+                        <DropdownMenuItem onClick={(e) => {
+                            e.stopPropagation();
+                            setIsDeleteDialogOpen(true);
+                        }}
+                            className="cursor-pointer text-red-500"
+                        >
                             <Trash2 />Deletar
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
-        </li>
+
+            <DeleteClientDialog
+                open={isDeleteDialogOpen}
+                onClose={() => setIsDeleteDialogOpen(false)}
+                onConfirm={(handleDelete)}
+            />
+        </li >
     );
 }

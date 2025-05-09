@@ -8,7 +8,7 @@ import {
   Sun,
   Moon,
 } from "lucide-react"
-import { useEffect, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import FilterOptions from "./components/FilterOptions";
 import AddClientForm from "./components/AddClientForm";
 import AddClientButton from "./components/AddClientButton";
@@ -18,8 +18,52 @@ import { Client } from "../../types/clientType";
 import EditClientForm from "./components/EditClientForm";
 import { LoadingOverlay } from "@/components/ui/loadingOverlay";
 
-export default function ClientsListing() {
-  const { clients, isLoading, createClient, editClient, getClients, removeClient } = useClients()
+/**
+
+@component ClientsListing
+
+@description
+Componente principal responsável por listar, adicionar, editar e remover clientes no sistema.
+Apresenta a lista de clientes, permite alternar entre modo escuro/claro, exibe valores a receber com opção de ocultar,
+e oferece recursos de busca e filtragem.
+
+@features
+Busca e exibição de lista de clientes
+Alternância para ocultar/exibir valores financeiros
+Abertura de modal para adição e edição de clientes
+Integração com o hook useClients para operações de CRUD
+
+@state
+hideValues (boolean): controla visibilidade do valor a receber
+isModalOpen (boolean): controla exibição do modal de adicionar cliente
+isEditModalOpen (boolean): controla exibição do modal de edição
+selectedClientId (number): ID do cliente selecionado para edição
+
+@effects
+useEffect na montagem do componente chama getClients para carregar os dados
+
+@dependencies
+useClients: hook customizado para lógica de negócios (fetch, create, edit, delete, redirect)
+lucide-react: ícones para UI
+
+Componentes filhos:
+FilterOptions, AddClientForm, AddClientButton, ClientItem, EditClientForm
+
+LoadingOverlay (mostrado durante carregamento)
+
+@returns {JSX.Element} UI com barra superior de controle, valor a receber, busca, lista de clientes e modais
+*/
+export default function ClientsListing(): JSX.Element {
+  const {
+    clients,
+    isLoading,
+    createClient,
+    editClient,
+    getClients,
+    goToClientDetailsPage,
+    removeClient
+  } = useClients()
+
   const [darkMode, setDarkMode] = useState(false);
   const [hideValues, setHideValues] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
@@ -106,6 +150,7 @@ export default function ClientsListing() {
                 key={client.id} client={client}
                 onEditClient={handleEditClient}
                 onDeleteClient={removeClient}
+                onViewDetails={goToClientDetailsPage}
               />))}
           </ul>
         </div>

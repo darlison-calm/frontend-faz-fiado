@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Client, ClientFormData } from "../../../types/clientType";
 import { deleteClient, loadClients, saveClient, updateClient } from "../services/clientService";
 import { UnauthorizedError } from "@/app/erros/unauthorized";
@@ -34,7 +34,7 @@ export function useClients() {
   * @throws `UnauthorizedError` se o usuário não estiver autenticado (redireciona para `/signin`).
   * @toast error - "Erro ao buscar clientes" caso ocorra qualquer outro erro.
   */
-    async function getClients(signal: AbortSignal): Promise<void> {
+    const getClients = useCallback(async (signal: AbortSignal) => {
         try {
             setIsLoading(true);
             const data = await loadClients(signal);
@@ -49,7 +49,8 @@ export function useClients() {
         } finally {
             setIsLoading(false);
         }
-    }
+    }, []);
+
 
     /**
      * Cria um novo cliente.

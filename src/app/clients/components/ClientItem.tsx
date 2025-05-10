@@ -11,7 +11,7 @@ import DeleteClientDialog from './DeleteClientDialog';
 
 interface ClientItemProps {
     client: Client;
-    onDeleteClient: (id: number) => void;
+    onDeleteClient: (id: number) => Promise<void>;
     onEditClient: (id: number) => void;
     onViewDetails: (id: number) => void;
 }
@@ -25,7 +25,7 @@ interface ClientItemProps {
  *
  * @param {ClientItemProps} props - Propriedades do componente.
  * @param {Client} props.client - Objeto do cliente a ser exibido.
- * @param {(id: number) => void} props.onDeleteClient - Função chamada ao confirmar exclusão do cliente.
+ * @param {(id: number) => Promise<void>} props.onDeleteClient - Função chamada ao confirmar exclusão do cliente.
  * @param {(id: number) => void} props.onEditClient - Função chamada ao clicar na opção de editar.
  * @param {(id: number) => void} props.onViewDetails - Função chamada ao clicar no item para ver detalhes.
  *
@@ -52,9 +52,9 @@ export default function ClientItem({ client, onDeleteClient, onEditClient, onVie
         onEditClient(client.id);
     };
 
-    const handleDelete = (e: React.MouseEvent) => {
+    const handleDelete = async (e: React.MouseEvent) => {
         e.stopPropagation();
-        onDeleteClient(client.id);
+        await onDeleteClient(client.id);
         setIsDeleteDialogOpen(false);
     }
 

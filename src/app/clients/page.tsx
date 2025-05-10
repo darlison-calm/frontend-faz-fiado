@@ -78,7 +78,7 @@ export default function ClientsListing(): JSX.Element {
     return () => {
       controller.abort()
     }
-  }, []);
+  }, [getClients]);
 
   const changeColorMode = () => {
     setDarkMode(prev => !prev)

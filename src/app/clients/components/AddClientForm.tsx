@@ -6,7 +6,7 @@ import { useState } from "react";
 interface AddClientFormProps {
   open: boolean;
   setOpen: (open: boolean) => void;
-  onCreateClient: (data: ClientFormData) => Promise<Client>;
+  onCreateClient: (data: ClientFormData) => Promise<Client | void>;
 }
 
 export default function AddClientForm({ open, setOpen, onCreateClient }: AddClientFormProps) {
@@ -16,15 +16,14 @@ export default function AddClientForm({ open, setOpen, onCreateClient }: AddClie
     try {
       setServerErrors({});
       await onCreateClient(data);
-      setOpen(false);
     } catch (error) {
       if (error instanceof BadRequestError) {
-        const errors = error.response.data;
+        const errors = error.response?.data ?? {};
         setServerErrors(errors);
-      } else {
-        console.error("Erro inesperado:", error);
-        setOpen(false);
       }
+    }
+    finally {
+      setOpen(false);
     }
   };
 

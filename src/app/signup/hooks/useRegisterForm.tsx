@@ -40,15 +40,13 @@ export const useRegisterForm = () => {
             const token = JSON.stringify(authRes.data?.token)
             localStorage.setItem("token", token);
             router.push("/clients")
-        } catch (error: any) {
+        } catch (error) {
             if (error instanceof ConflictError || error instanceof BadRequestError) {
-                const serverErrors = error.response.data;
+                const serverErrors = error.response?.data ?? {};
                 Object.entries(serverErrors).forEach(([field, mes]) => {
                     formMethods.setError(field as keyof TCreateUserSchema, { type: 'server', message: mes as string });
                 });
             }
-            const errorMessage = error instanceof Error ? error.message : "Ocorreu um erro inesperado.";
-            console.log(errorMessage);
         } finally {
             setLoading(false);
         }

@@ -1,6 +1,11 @@
 import { UseFormRegister, FieldErrors } from "react-hook-form";
 
-export interface InputFieldProps<TFormSchema extends Record<string, any>> {
+
+interface BaseFormSchema {
+  [key: string]: string 
+}
+
+export interface InputFieldProps<TFormSchema extends BaseFormSchema> {
   id: string;
   name: keyof TFormSchema;
   type: string;

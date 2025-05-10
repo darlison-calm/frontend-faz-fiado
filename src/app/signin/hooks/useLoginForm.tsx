@@ -19,8 +19,9 @@ export const useLoginForm = () => {
             const token = res.data.token;
             localStorage.setItem("token", JSON.stringify(token));
             router.push("/clients")
-        } catch (error) {
-            throw error;
+        } catch {
+            // TO DO:
+            // adicionar errors de credenciais inválidas
         } finally {
             setLoading(false);
         }

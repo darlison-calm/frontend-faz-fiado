@@ -39,8 +39,8 @@ export function useClients() {
             setIsLoading(true);
             const data = await loadClients(signal);
             setClients(data);
-        } catch (err: any) {
-            if (err.name === "CanceledError") return;
+        } catch (err) {
+            if (err instanceof Error && err.name === "CanceledError") return;
             if (err instanceof UnauthorizedError) {
                 router.push("/signin");
                 return;
@@ -60,15 +60,14 @@ export function useClients() {
      * @toast success - Exibe "Cliente criado" quando a criação é bem-sucedida.
      * @toast error - Exibe "Erro ao criar cliente" em caso de falha.
      */
-    async function createClient(data: ClientFormData): Promise<Client> {
+    async function createClient(data: ClientFormData): Promise<Client | void> {
         try {
             const newClient = await saveClient(data);
             setClients((prev) => [...prev, newClient]);
             toast.success("Cliente criado");
             return newClient;
-        } catch (err: any) {
+        } catch {
             toast.error("Erro ao criar cliente");
-            throw err;
         }
     }
 
@@ -84,7 +83,7 @@ export function useClients() {
             await deleteClient(id);
             setClients((prev) => prev.filter((c) => c.id !== id));
             toast.success("Cliente deletado");
-        } catch (err: any) {
+        } catch {
             toast.error("Erro ao remover cliente");
         }
     }
@@ -106,7 +105,7 @@ export function useClients() {
                 )
             );
             toast.success("Cliente editado");
-        } catch (err: any) {
+        } catch {
             toast.error("Erro ao editar cliente");
         }
     }

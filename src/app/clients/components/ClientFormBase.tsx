@@ -7,7 +7,6 @@ import { ClientFormData } from "@/types/clientType";
 import { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 
-
 interface ClientFormBaseProps {
     open: boolean;
     setOpen: (open: boolean) => void;
@@ -47,6 +46,11 @@ export function ClientFormBase({
         reset();
     };
 
+    const submit = (clientFormData: ClientFormData) => {
+        onSubmit(clientFormData),
+            reset();
+    }
+
     useEffect(() => {
         if (open && defaultValues) {
             reset(defaultValues);
@@ -71,7 +75,7 @@ export function ClientFormBase({
                     <DialogTitle>{title}</DialogTitle>
                     <DialogDescription>{description}</DialogDescription>
                 </DialogHeader>
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 flex-1 flex flex-col">
+                <form onSubmit={handleSubmit(submit)} className="space-y-2 flex-1 flex flex-col">
                     <div className="grid gap-2">
                         <Label htmlFor="name" className={errors.fullName ? "text-red-500" : ""}>
                             Nome*

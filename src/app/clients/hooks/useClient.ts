@@ -49,7 +49,7 @@ export function useClients() {
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [router]);
 
 
     /**

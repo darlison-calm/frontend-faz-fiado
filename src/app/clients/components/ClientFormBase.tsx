@@ -47,8 +47,8 @@ export function ClientFormBase({
     };
 
     const submit = (clientFormData: ClientFormData) => {
-        onSubmit(clientFormData),
-            reset();
+        onSubmit(clientFormData);
+        reset();
     }
 
     useEffect(() => {

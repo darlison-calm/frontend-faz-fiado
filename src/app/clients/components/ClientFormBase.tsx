@@ -11,7 +11,7 @@ interface ClientFormBaseProps {
     open: boolean;
     setOpen: (open: boolean) => void;
     onSubmit: SubmitHandler<ClientFormData>;
-    defaultValues?: ClientFormData;
+    defaultValues: ClientFormData;
     title: string;
     description: string;
     serverErrors?: Record<string, string>
@@ -33,12 +33,7 @@ export function ClientFormBase({
         handleSubmit,
         setError
     } = useForm<ClientFormData>({
-        defaultValues: defaultValues || {
-            fullName: "",
-            phoneNumber: "",
-            address: "",
-            observation: "",
-        },
+        defaultValues: defaultValues
     });
 
     const closeForm = () => {
@@ -81,7 +76,7 @@ export function ClientFormBase({
                             Nome*
                         </Label>
                         <Input
-                            id="name"
+                            id="fullName"
                             {...register("fullName", { required: "Nome é obrigatório" })}
                             className={errors.fullName ? "border-red-500" : ""}
                             placeholder="Digite o nome"
@@ -92,27 +87,27 @@ export function ClientFormBase({
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="telefone">Telefone</Label>
+                        <Label htmlFor="phoneNumber">Telefone</Label>
                         <Input
-                            id="telefone"
+                            id="phoneNumber"
                             {...register("phoneNumber")}
                             placeholder="(00) 00000-0000"
                         />
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="endereco">Endereço</Label>
+                        <Label htmlFor="address">Endereço</Label>
                         <Input
-                            id="endereco"
+                            id="address"
                             {...register("address")}
                             placeholder="Rua, número, bairro, cidade"
                         />
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="observacao">Observação</Label>
+                        <Label htmlFor="observation">Observação</Label>
                         <Textarea
-                            id="observacao"
+                            id="observation"
                             {...register("observation")}
                             placeholder="Informações adicionais sobre o cliente"
                             rows={3}

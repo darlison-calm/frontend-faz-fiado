@@ -22,9 +22,6 @@ export default function AddClientForm({ open, setOpen, onCreateClient }: AddClie
         setServerErrors(errors);
       }
     }
-    finally {
-      setOpen(false);
-    }
   };
 
   return (
@@ -35,6 +32,12 @@ export default function AddClientForm({ open, setOpen, onCreateClient }: AddClie
       title="Adicionar Novo Cliente"
       description="Preencha os dados para adicionar um novo cliente."
       serverErrors={serverErrors}
+      defaultValues={{
+        fullName: "",
+        phoneNumber: "",
+        address: "",
+        observation: "",
+      }}
     />
   );
 }

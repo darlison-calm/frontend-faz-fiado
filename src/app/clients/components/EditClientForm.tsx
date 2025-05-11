@@ -12,7 +12,7 @@ interface ClienteModalProps {
 }
 
 export default function EditClientForm({ open, setOpen, clientId, onEditClient }: ClienteModalProps) {
-    const [defaultValues, setDefaultValues] = useState<ClientFormData | undefined>();
+    const [defaultValues, setDefaultValues] = useState<ClientFormData>();
     const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
 
 
@@ -23,7 +23,7 @@ export default function EditClientForm({ open, setOpen, clientId, onEditClient }
             setOpen(false);
         } catch (error) {
             if (error instanceof BadRequestError) {
-                const errors = error.response.data;
+                const errors = error.response?.data ?? {};
                 setServerErrors(errors);
             }
         }
@@ -48,7 +48,7 @@ export default function EditClientForm({ open, setOpen, clientId, onEditClient }
         fetchClient();
     }, [clientId, open]);
 
-    return (
+    return defaultValues ? (
         <ClientFormBase
             open={open}
             setOpen={setOpen}
@@ -58,5 +58,5 @@ export default function EditClientForm({ open, setOpen, clientId, onEditClient }
             description="Altere os dados do seu cliente."
             serverErrors={serverErrors}
         />
-    );
+    ) : null;
 }

@@ -41,9 +41,9 @@ export function ClientFormBase({
         reset();
     };
 
-    const submit = (clientFormData: ClientFormData) => {
+    const submitForm = (clientFormData: ClientFormData) => {
         onSubmit(clientFormData);
-        reset();
+        closeForm();
     }
 
     useEffect(() => {
@@ -70,7 +70,7 @@ export function ClientFormBase({
                     <DialogTitle>{title}</DialogTitle>
                     <DialogDescription>{description}</DialogDescription>
                 </DialogHeader>
-                <form onSubmit={handleSubmit(submit)} className="space-y-2 flex-1 flex flex-col">
+                <form onSubmit={handleSubmit(submitForm)} className="space-y-2 flex-1 flex flex-col">
                     <div className="grid gap-2">
                         <Label htmlFor="name" className={errors.fullName ? "text-red-500" : ""}>
                             Nome*

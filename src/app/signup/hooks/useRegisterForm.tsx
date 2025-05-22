@@ -1,5 +1,5 @@
 'use client'
-import { createUserSchema, TAuthUSer, TCreateUser, TCreateUserSchema } from "@/types/userTypes";
+import { createUserSchema, TAuthUser, TCreateUser, TCreateUserSchema } from "@/types/userTypes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -31,7 +31,7 @@ export const useRegisterForm = () => {
             }
             await api.post('/users/registration', createUserPayload);
 
-            const authPayload: TAuthUSer = {
+            const authPayload: TAuthUser = {
                 loginMethod: formData.email,
                 password: formData.password,
             };

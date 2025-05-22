@@ -16,6 +16,7 @@ export default function AddClientForm({ open, setOpen, onCreateClient }: AddClie
     try {
       setServerErrors({});
       await onCreateClient(data);
+      setOpen(false);
     } catch (error) {
       if (error instanceof BadRequestError) {
         const errors = error.response?.data ?? {};

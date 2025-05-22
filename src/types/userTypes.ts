@@ -30,7 +30,7 @@ export type TCreateUser = {
     username?: string;
 }
 
-export type TAuthUSer = {
+export type TAuthUser = {
     loginMethod: string;
     password: string;
 }
@@ -38,5 +38,5 @@ export type TAuthUSer = {
 type PhoneNumber = {
     value: string;
     locale: string;
-  };
+};
 

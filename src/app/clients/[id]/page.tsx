@@ -7,7 +7,7 @@ import type { Client } from "../../../types/clientType"
 import { loadClient } from "../services/clientService"
 import { LoadingOverlay } from "@/components/ui/loadingOverlay"
 import { useRouter } from "next/navigation"
-
+import { NewSaleForm } from "@/app/sales/new-sale-form"
 interface Transaction {
     id: string
     amount: number
@@ -24,6 +24,7 @@ interface Transaction {
 
 export default function ClientDetail() {
     const [hideValues, setHideValues] = useState(false)
+    const [isNewSaleModalOpen, setIsNewSaleModalOpen] = useState(false);
     const [client, setClient] = useState<Client>()
     const { id } = useParams<{ id: string }>()
     const [isLoading, setIsLoading] = useState(false)
@@ -81,6 +82,8 @@ export default function ClientDetail() {
     if (isLoading) {
         return <LoadingOverlay />
     }
+
+
     return (
         <div className="flex flex-col h-screen">
             <div className="bg-[var(--highlight)] text-white pb-3">
@@ -200,10 +203,13 @@ export default function ClientDetail() {
                 </div>
             </div>
             <div className="fixed right-4 bottom-4 sm:right-6 sm:bottom-6">
-                <button className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-r from-[#0057DB] to-[#0065FF] flex items-center justify-center shadow-lg hover:from-[#004FC7] hover:to-[#005AE6] transition-colors">
+                <button onClick={() => setIsNewSaleModalOpen(true)} className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-r from-[#0057DB] to-[#0065FF] flex items-center justify-center shadow-lg hover:from-[#004FC7] hover:to-[#005AE6] transition-colors">
                     <Plus className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                 </button>
             </div>
+
+            <NewSaleForm isOpen={isNewSaleModalOpen} onClose={() => setIsNewSaleModalOpen(false)} />
+
         </div>
     )
 }

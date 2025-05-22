@@ -41,9 +41,9 @@ export function ClientFormBase({
         reset();
     };
 
-    const submitForm = (clientFormData: ClientFormData) => {
-        onSubmit(clientFormData);
-        closeForm();
+    const submitForm = async (clientFormData: ClientFormData) => {
+        await onSubmit(clientFormData);
+        reset()
     }
 
     useEffect(() => {

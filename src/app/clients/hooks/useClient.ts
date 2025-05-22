@@ -67,8 +67,9 @@ export function useClients() {
             setClients((prev) => [...prev, newClient]);
             toast.success("Cliente criado");
             return newClient;
-        } catch {
+        } catch (error) {
             toast.error("Erro ao criar cliente");
+            throw error;
         }
     }
 

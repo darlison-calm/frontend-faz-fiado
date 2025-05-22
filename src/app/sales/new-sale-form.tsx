@@ -1,9 +1,9 @@
 import { Dialog, DialogContent, DialogTitle } from "@radix-ui/react-dialog";
 import { DialogHeader } from "../../components/ui/dialog";
-import { useCallback, useMemo, useRef, useState } from "react";
-import { ChevronDown, ChevronUp, ToggleLeft } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { DatePicker } from "@/components/ui/date-picker";
-import { format } from "date-fns";
+import { useSaleForm } from "./hooks/useSaleForm";
+import { TotalAmountInput } from "./components/total-amount-input";
 
 export interface SaleData {
     value: number
@@ -18,26 +18,17 @@ export interface SaleFormProps {
 }
 
 export function NewSaleForm({ isOpen, onClose }: SaleFormProps) {
-    const finalAmountRef = useRef('');
-    const [isValueValid, setIsValueValid] = useState(false);
-    const [isInstallmentOpen, setIsInstallmentOpen] = useState(false);
-    const [singleDueDate, setSingleDueDate] = useState<Date>();
-
-
-    const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        finalAmountRef.current = value;
-
-        const num = Number.parseFloat(value);
-        const valid = value !== '' && !isNaN(num) && num > 0;
-        setIsValueValid(valid);
-    }, []);
-
-    const toggleInstallmentSection = () => {
-        if (isValueValid) {
-            setIsInstallmentOpen(prev => !prev)
-        }
-    }
+    const {
+        toggleInstallmentSection,
+        handleTotalAmountChange,
+        isInstallmentOpen,
+        isValueValid,
+        singleDueDate,
+        setSingleDueDate,
+        installmentsCount,
+        setInstallmentsCount,
+        finalAmount
+    } = useSaleForm();
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
@@ -47,21 +38,7 @@ export function NewSaleForm({ isOpen, onClose }: SaleFormProps) {
                 </DialogHeader>
 
                 <form className="space-y-4 flex-1 flex flex-col bg-red-50">
-                    <div>
-                        <label htmlFor="totalValue" className="block text-sm font-medium text-gray-500 mb-1">
-                            Valor
-                        </label>
-                        <div className="relative">
-                            <input
-                                type="text"
-                                id="totalValue"
-                                name="totalValue"
-                                onChange={handleChange}
-                                placeholder="50,00"
-                                className="block w-full px-3 py-3 border border-gray-200 rounded-lg shadow-sm focus:ring-[#0065FF] focus:border-[#0065FF] text-sm bg-gray-100"
-                            />
-                        </div>
-                    </div>
+                    <TotalAmountInput onChange={handleTotalAmountChange} totalAmount={finalAmount} />
 
                     <div>
                         <label htmlFor="description" className="block text-sm font-medium text-gray-500 mb-1">
@@ -102,8 +79,31 @@ export function NewSaleForm({ isOpen, onClose }: SaleFormProps) {
                             <p className="text-xs text-gray-500 mt-1">Informe um valor válido para habilitar o parcelamento</p>
                         )}
                     </div>
+
+                    {isInstallmentOpen && (
+                        <div className="space-y-4 pt-2">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label htmlFor="installmentsCount" className="block text-sm font-medium text-gray-500 mb-1">
+                                        Qtd. de parcelas
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="installmentsCount"
+                                        value={installmentsCount}
+                                        onChange={(e) => {
+                                            setInstallmentsCount(e.target.value.replace(/[^\d]/g, ""));
+                                        }}
+                                        className={`block w-full px-3 py-3 border "border-red-500" : "border-gray-200"
+                                            } rounded-lg shadow-sm focus:ring-[#0065FF] focus:border-[#0065FF] text-sm bg-gray-100`}
+                                    />
+                                    {/* {errors.installmentsCount && <p className="mt-1 text-sm text-red-600">{errors.installmentsCount}</p>} */}
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </form>
             </DialogContent>
         </Dialog>
-    )
+    );
 }

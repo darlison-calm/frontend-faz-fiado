@@ -1,15 +1,28 @@
 import { addDays } from "date-fns";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useMemo, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { SaleData } from "../new-sale-form";
 
 export function useAddSaleForm() {
-    const { register, setValue, control, handleSubmit, getValues } = useForm<SaleData>({
+    const { register, setValue, control, handleSubmit, getValues, watch } = useForm<SaleData>({
         defaultValues: {
             totalAmount: '',
-            installments: [{ value: '', deadline: addDays(new Date(), 30) }]
+            installments: [{ value: '0.00', deadline: addDays(new Date(), 30) }]
         }
-    })
+    });
+
+    const [isInstallmentOpen, setIsInstallmentOpen] = useState(false);
+
+    const totalAmount = watch("totalAmount");
+    const isValidTotalAmount = useMemo(() => {
+        return totalAmount && !isNaN(Number.parseFloat(totalAmount)) && Number.parseFloat(totalAmount) > 0
+    }, [totalAmount])
+
+    const toggleInstallmentSection = () => {
+        if (isValidTotalAmount) {
+            setIsInstallmentOpen(!isInstallmentOpen)
+        }
+    }
 
     const { fields, update } = useFieldArray({
         name: 'installments',
@@ -39,14 +52,22 @@ export function useAddSaleForm() {
     }
 
     const setInstallmentDeadline = (index: number, date: Date | undefined) => {
-        const currentField = getValues(`installments.${index}`);
+        const installment = getValues(`installments.${index}`);
         update(index, {
-            ...currentField,
+            ...installment,
             deadline: date
         });
     };
 
     return {
-        register, submit, handleTotalAmountChange, fields, handleSubmit, setInstallmentDeadline
+        register,
+        submit,
+        handleTotalAmountChange,
+        fields,
+        handleSubmit,
+        setInstallmentDeadline,
+        isInstallmentOpen,
+        toggleInstallmentSection,
+        isValidTotalAmount
     }
 }

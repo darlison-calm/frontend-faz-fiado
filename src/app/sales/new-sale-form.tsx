@@ -22,7 +22,18 @@ interface SaleFormProps {
 }
 
 export function NewSaleForm({ isOpen, onClose }: SaleFormProps) {
-    const { submit, register, handleSubmit, handleTotalAmountChange, setInstallmentDeadline, fields } = useAddSaleForm()
+    const {
+        submit,
+        register,
+        handleSubmit,
+        handleTotalAmountChange,
+        setInstallmentDeadline,
+        fields,
+        isInstallmentOpen,
+        isValidTotalAmount,
+        toggleInstallmentSection
+    } = useAddSaleForm();
+
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
@@ -59,52 +70,55 @@ export function NewSaleForm({ isOpen, onClose }: SaleFormProps) {
                             placeholder="Descrição"
                         />
                     </div>
-                    <div>
-                        <label htmlFor="dueDate" className="block text-sm font-medium text-[#0065FF] mb-1">
-                            Data do vencimento
-                        </label>
-                        <DatePicker
-                            date={fields[0].deadline}
-                            setDate={date => setInstallmentDeadline(0, date)}
-                        />
-                    </div>
+                    {!isInstallmentOpen && (
+                        <div>
+                            <label htmlFor="dueDate" className="block text-sm font-medium text-[#0065FF] mb-1">
+                                Data do vencimento
+                            </label>
+                            <DatePicker
+                                date={fields[0].deadline}
+                                setDate={date => setInstallmentDeadline(0, date)}
+                            />
+                        </div>)
+                    }
                     <div className="pt-2 border-t border-gray-200">
                         <button
                             type="button"
-                            className="flex w-full justify-between items-center text-left focus:outline-none py-2 "
-
+                            onClick={toggleInstallmentSection}
+                            disabled={!isValidTotalAmount}
+                            className={`flex w-full justify-between items-center text-left focus:outline-none py-2 ${isValidTotalAmount ? "text-[#0065FF]" : "text-gray-400 cursor-not-allowed"
+                                }`}
                         >
                             <span className="text-base font-medium">Parcelamento</span>
-                            <ChevronUp className="h-5 w-5" />
+                            {isInstallmentOpen ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
                         </button>
-                        <p className="text-xs text-gray-500 mt-1">Informe um valor válido para habilitar o parcelamento</p>
                     </div>
-
-                    <div className="space-y-4 pt-2">
-                        <div className="grid grid-cols-2 gap-4">
+                    {isInstallmentOpen && (
+                        <div className="space-y-4 pt-2">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label htmlFor="installmentsCount" className="block text-sm font-medium text-gray-500 mb-1">
+                                        Quantidade de parcelas
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="installmentsCount"
+                                        className={`block w-full px-3 py-3 border "border-red-500" : "border-gray-200"
+                                            } rounded-lg shadow-sm focus:ring-[#0065FF] focus:border-[#0065FF] text-sm bg-gray-100`}
+                                    />
+                                </div>
+                            </div>
                             <div>
-                                <label htmlFor="installmentsCount" className="block text-sm font-medium text-gray-500 mb-1">
-                                    Quantidade de parcelas
+                                <label htmlFor="daysBetween" className="block text-sm font-medium text-gray-500 mb-1">
+                                    Dias entre parcelas
                                 </label>
                                 <input
                                     type="text"
-                                    id="installmentsCount"
-                                    className={`block w-full px-3 py-3 border "border-red-500" : "border-gray-200"
-                                            } rounded-lg shadow-sm focus:ring-[#0065FF] focus:border-[#0065FF] text-sm bg-gray-100`}
+                                    id="daysBetween"
+                                    className="block w-full px-3 py-3 border border-gray-200 rounded-lg shadow-sm focus:ring-[#0065FF] focus:border-[#0065FF] text-sm bg-gray-100"
                                 />
                             </div>
-                        </div>
-                        <div>
-                            <label htmlFor="daysBetween" className="block text-sm font-medium text-gray-500 mb-1">
-                                Dias entre parcelas
-                            </label>
-                            <input
-                                type="text"
-                                id="daysBetween"
-                                className="block w-full px-3 py-3 border border-gray-200 rounded-lg shadow-sm focus:ring-[#0065FF] focus:border-[#0065FF] text-sm bg-gray-100"
-                            />
-                        </div>
-                        {/* <div className={`p-3 rounded-md ${Math.abs(totalDiscrepancy) > 0.01 ? "bg-red-50" : "bg-blue-50"}`}>
+                            {/* <div className={`p-3 rounded-md ${Math.abs(totalDiscrepancy) > 0.01 ? "bg-red-50" : "bg-blue-50"}`}>
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center">
                                     {Math.abs(totalDiscrepancy) > 0.01 ? (
@@ -126,44 +140,39 @@ export function NewSaleForm({ isOpen, onClose }: SaleFormProps) {
                             </div>
 
                         </div> */}
-                        {fields.map((field, index) => (
-                            <div key={index} className="space-y-2">
-                                <h3 className="text-[#0065FF] font-medium text-base">{index + 1}° PARCELA</h3>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label htmlFor={`installmentValue-${index}`} className="block text-xs text-gray-500 mb-1">
-                                            Valor
-                                        </label>
-                                        <div className="relative">
-                                            <input
-                                                key={field.id}
-                                                {...register(`installments.${index}.value`)}
-                                                type="text"
-                                                id={`installmentValue-${index}`}
-                                                className="block w-full px-3 py-3 border
+                            {fields.map((field, index) => (
+                                <div key={index} className="space-y-2">
+                                    <h3 className="text-[#0065FF] font-medium text-base">{index + 1}° PARCELA</h3>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label htmlFor={`installmentValue-${index}`} className="block text-xs text-gray-500 mb-1">
+                                                Valor
+                                            </label>
+                                            <div className="relative">
+                                                <input
+                                                    key={field.id}
+                                                    {...register(`installments.${index}.value`)}
+                                                    type="text"
+                                                    id={`installmentValue-${index}`}
+                                                    className="block w-full px-3 py-3 border
                                                     rounded-lg shadow-sm focus:ring-[#0065FF] focus:border-[#0065FF] text-sm bg-blue-50"
-                                            />
-                                            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
-                                                <div className="w-4 h-4 bg-[#0065FF] rounded-full flex items-center justify-center">
-                                                    <div className="w-2 h-2 bg-white rounded-full"></div>
-                                                </div>
+                                                />
                                             </div>
                                         </div>
-                                    </div>
-                                    <div>
-                                        <label htmlFor={`installmentDate-${index}`} className="block text-xs text-gray-500 mb-1">
-                                            Data do vencimento
-                                        </label>
-                                        <DatePicker
-                                            date={field.deadline}
-                                            setDate={(date) => setInstallmentDeadline(index, date)}
-                                        />
+                                        <div>
+                                            <label htmlFor={`installmentDate-${index}`} className="block text-xs text-gray-500 mb-1">
+                                                Data do vencimento
+                                            </label>
+                                            <DatePicker
+                                                date={field.deadline}
+                                                setDate={(date) => setInstallmentDeadline(index, date)}
+                                            />
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
-                    </div>
-
+                            ))}
+                        </div>
+                    )}
                     <button type="submit"> confirmar</button>
                 </form>
             </DialogContent>

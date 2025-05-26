@@ -3,7 +3,6 @@ import { formatCurrency } from "@/utils/formatCurrency";
 import { addDays } from "date-fns";
 import { ChangeEvent, useMemo, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
-import { number } from "zod";
 
 export function useAddSaleForm() {
     const { register, setValue, control, handleSubmit, getValues, watch } = useForm<SaleData>({
@@ -42,7 +41,7 @@ export function useAddSaleForm() {
 
 
     const submit = (formFields: SaleData) => {
-        console.log({ ...formFields });
+        console.log(formFields);
     }
 
     const setInstallmentDeadline = (index: number, date: Date | undefined) => {

@@ -1,25 +1,31 @@
+import { SaleData } from "@/types/salesTypes";
+import { formatCurrency } from "@/utils/formatCurrency";
 import { addDays } from "date-fns";
 import { ChangeEvent, useMemo, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
-import { SaleData } from "../new-sale-form";
+import { number } from "zod";
 
 export function useAddSaleForm() {
     const { register, setValue, control, handleSubmit, getValues, watch } = useForm<SaleData>({
         defaultValues: {
-            totalAmount: '',
-            installments: [{ value: '0.00', deadline: addDays(new Date(), 30) }]
+            grossAmount: '00,00',
+            interestRate: '',
+            installments: [{ value: '00,00', deadline: addDays(new Date(), 30) }],
+            description: ''
         }
     });
-
+    const grossAmount = watch("grossAmount");
+    const interestRate = watch("interestRate");
     const [isInstallmentOpen, setIsInstallmentOpen] = useState(false);
 
-    const totalAmount = watch("totalAmount");
-    const isValidTotalAmount = useMemo(() => {
-        return totalAmount && !isNaN(Number.parseFloat(totalAmount)) && Number.parseFloat(totalAmount) > 0
-    }, [totalAmount])
+
+
+    const isValidGrossAmount = useMemo(() => {
+        return grossAmount && !isNaN(Number.parseFloat(grossAmount)) && Number.parseFloat(grossAmount) > 0
+    }, [grossAmount])
 
     const toggleInstallmentSection = () => {
-        if (isValidTotalAmount) {
+        if (isValidGrossAmount) {
             setIsInstallmentOpen(!isInstallmentOpen)
         }
     }
@@ -28,27 +34,15 @@ export function useAddSaleForm() {
         name: 'installments',
         control
     })
-    const handleTotalAmountChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const rawValue = event.target.value.replace(/[^0-9]/g, '');
 
-        if (rawValue.length >= 14) {
-            return;
-        }
-        const numericValue = (Number.parseFloat(rawValue) / 100)
-
-        if (Number.isNaN(numericValue)) {
-            setValue("totalAmount", "");
-            return;
-        }
-        const formattedValue = numericValue.toLocaleString(
-            "pt-BR",
-            { minimumFractionDigits: 2 }
-        );
-        setValue("totalAmount", formattedValue);
+    const handleGrossAmountChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const formattedValue = formatCurrency(event.target.value);
+        setValue("grossAmount", formattedValue);
     }
 
+
     const submit = (formFields: SaleData) => {
-        console.log(formFields);
+        console.log({ ...formFields });
     }
 
     const setInstallmentDeadline = (index: number, date: Date | undefined) => {
@@ -59,15 +53,30 @@ export function useAddSaleForm() {
         });
     };
 
+    const formatInterestRate = (rawValue: string) => {
+        if (!rawValue) return "";
+
+        const numbers = rawValue.replace(/\D/g, "");
+        if (!numbers) return "";
+
+        return `${numbers}%`;
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const interestRate = formatInterestRate(e.target.value);
+        setValue("interestRate", interestRate)
+    };
+
     return {
         register,
         submit,
-        handleTotalAmountChange,
+        handleGrossAmountChange,
         fields,
         handleSubmit,
         setInstallmentDeadline,
         isInstallmentOpen,
         toggleInstallmentSection,
-        isValidTotalAmount
+        isValidGrossAmount,
+        handleChange
     }
 }

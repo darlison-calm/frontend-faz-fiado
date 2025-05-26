@@ -1,21 +1,8 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertCircle, ChevronDown, ChevronUp } from "lucide-react";
 import { DatePicker } from "@/components/ui/date-picker";
-import { ChangeEvent, useState } from "react";
-import { addDays } from "date-fns";
-import { useFieldArray, useForm } from "react-hook-form";
 import { useAddSaleForm } from "./hooks/useAddSaleForm";
 
-
-export interface SaleData {
-    totalAmount: string
-    description: string
-    installments: Installment[]
-}
-export type Installment = {
-    value: string
-    deadline: Date | undefined
-}
 interface SaleFormProps {
     isOpen: boolean;
     onClose: () => void;
@@ -26,14 +13,14 @@ export function NewSaleForm({ isOpen, onClose }: SaleFormProps) {
         submit,
         register,
         handleSubmit,
-        handleTotalAmountChange,
+        handleGrossAmountChange,
         setInstallmentDeadline,
         fields,
         isInstallmentOpen,
-        isValidTotalAmount,
-        toggleInstallmentSection
+        isValidGrossAmount,
+        toggleInstallmentSection,
+        handleChange,
     } = useAddSaleForm();
-
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
@@ -43,18 +30,29 @@ export function NewSaleForm({ isOpen, onClose }: SaleFormProps) {
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit(submit)} className="space-y-4 flex-1 flex flex-col overflow-y-auto">
-                    <div>
-                        <label htmlFor="totalValue" className="block text-sm font-medium text-gray-500 mb-1">
+                    <div className="flex items-center gap-2">
+                        <label htmlFor="grossAmount" className="block text-sm font-medium text-gray-500 mb-1">
                             Valor
                         </label>
                         <div className="relative">
                             <input
                                 type="text"
-                                {...register("totalAmount", { required: true, onChange: handleTotalAmountChange })}
+                                {...register("grossAmount", { required: true, onChange: handleGrossAmountChange })}
                                 maxLength={14}
                                 inputMode="numeric"
-                                placeholder="50,00"
-                                className="block w-full px-3 py-3 border border-gray-200 rounded-lg shadow-sm focus:ring-[#0065FF] focus:border-[#0065FF] text-sm bg-gray-100"
+                                className="block w-full px-3 py-1.5 border border-gray-200 rounded-lg shadow-sm focus:ring-[#0065FF] focus:border-[#0065FF] text-sm bg-gray-100"
+                            />
+                        </div>
+                        <label htmlFor="interestRate" className="block text-sm font-medium text-gray-500 mb-1">
+                            Juros
+                        </label>
+                        <div className="relative">
+                            <input
+                                type="text"
+                                {...register("interestRate", { onChange: handleChange })}
+                                inputMode="numeric"
+                                placeholder="0%"
+                                className="block w-full px-3 py-1.5 border border-gray-200 rounded-lg shadow-sm focus:ring-[#0065FF] focus:border-[#0065FF] text-sm bg-gray-100"
                             />
                         </div>
                     </div>
@@ -66,6 +64,7 @@ export function NewSaleForm({ isOpen, onClose }: SaleFormProps) {
                         <textarea
                             id="description"
                             rows={3}
+                            {...register("description")}
                             className="block w-full px-3 py-3 border border-gray-200 rounded-lg shadow-sm focus:ring-[#0065FF] focus:border-[#0065FF] text-sm"
                             placeholder="Descrição"
                         />
@@ -85,8 +84,8 @@ export function NewSaleForm({ isOpen, onClose }: SaleFormProps) {
                         <button
                             type="button"
                             onClick={toggleInstallmentSection}
-                            disabled={!isValidTotalAmount}
-                            className={`flex w-full justify-between items-center text-left focus:outline-none py-2 ${isValidTotalAmount ? "text-[#0065FF]" : "text-gray-400 cursor-not-allowed"
+                            disabled={!isValidGrossAmount}
+                            className={`flex w-full justify-between items-center text-left focus:outline-none py-2 ${isValidGrossAmount ? "text-[#0065FF]" : "text-gray-400 cursor-not-allowed"
                                 }`}
                         >
                             <span className="text-base font-medium">Parcelamento</span>

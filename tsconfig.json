@@ -36,7 +36,7 @@
     "src/components/ui/floatingLabelInput.tx",
     "src/utils/api.ts",
     "src/app/clients/components/ButtonWithIcon.tsx"
-  ],
+, "src/components/ui/date-picker.tsx"  ],
   "exclude": [
     "node_modules"
   ]

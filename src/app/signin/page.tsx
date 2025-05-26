@@ -6,7 +6,7 @@ import { LoadingOverlay } from "@/components/ui/loadingOverlay";
 import { useLoginForm } from "./hooks/useLoginForm";
 
 export default function SignInForm() {
-    const { formMethods, isLoading, onSubmit } = useLoginForm()
+    const { formMethods, isLoading, onSubmit, goToSignUp } = useLoginForm();
     const {
         register,
         formState: { errors, isSubmitting },
@@ -35,6 +35,14 @@ export default function SignInForm() {
                 />
                 <Button className="w-full bg-[var(--highlight)]" disabled={isSubmitting} type="submit">
                     {isSubmitting ? "Carregando" : "Entrar"}
+                </Button>
+                <Button
+                    type="button"
+                    variant="ghost"
+                    className="w-full text-[var(--highlight)] underline"
+                    onClick={goToSignUp}
+                >
+                    Não tem uma conta? Clique aqui
                 </Button>
             </form>
         </div>

@@ -1,5 +1,5 @@
 'use client'
-import { createUserSchema, TAuthUSer, TCreateUser, TCreateUserSchema } from "@/users/types/userTypes";
+import { createUserSchema, TAuthUser, TCreateUser, TCreateUserSchema } from "@/types/userTypes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -31,7 +31,7 @@ export const useRegisterForm = () => {
             }
             await api.post('/users/registration', createUserPayload);
 
-            const authPayload: TAuthUSer = {
+            const authPayload: TAuthUser = {
                 loginMethod: formData.email,
                 password: formData.password,
             };
@@ -40,16 +40,14 @@ export const useRegisterForm = () => {
             const token = JSON.stringify(authRes.data?.token)
             localStorage.setItem("token", token);
             router.push("/clients")
-            setLoading(false);
-        } catch (error: any) {
+        } catch (error) {
             if (error instanceof ConflictError || error instanceof BadRequestError) {
-                const serverErrors = error.response.data;
+                const serverErrors = error.response?.data ?? {};
                 Object.entries(serverErrors).forEach(([field, mes]) => {
                     formMethods.setError(field as keyof TCreateUserSchema, { type: 'server', message: mes as string });
                 });
             }
-            const errorMessage = error instanceof Error ? error.message : "Ocorreu um erro inesperado.";
-            console.log(errorMessage);
+        } finally {
             setLoading(false);
         }
     }

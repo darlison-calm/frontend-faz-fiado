@@ -1,4 +1,4 @@
-import { Client, ClientFormData } from "../types/clientType";
+import { Client, ClientFormData } from "../../../types/clientType";
 import api from "@/lib/axiosInstance";
 
 export async function loadClients(signal: AbortSignal): Promise<Client[]> {
@@ -18,7 +18,6 @@ export async function loadClient(id: number): Promise<Client> {
         throw error;
     }
 }
-
 
 export async function saveClient(data: ClientFormData): Promise<Client> {
     const response = await api.post("/users/clients", data);

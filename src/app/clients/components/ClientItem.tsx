@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { JSX, useState } from 'react';
 import { User, MoreVertical, SquarePen, Trash2 } from 'lucide-react';
 import {
     DropdownMenu,
@@ -6,18 +6,60 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Client } from '../types/clientType';
+import { Client } from '../../../types/clientType';
+import DeleteClientDialog from './DeleteClientDialog';
 
 interface ClientItemProps {
     client: Client;
-    onDeleteClient: (id: number) => void;
+    onDeleteClient: (id: number) => Promise<void>;
     onEditClient: (id: number) => void;
+    onViewDetails: (id: number) => void;
 }
+/**
+ * @component ClientItem
+ *
+ * @description
+ * Componente responsável por exibir um item da lista de clientes.
+ * Apresenta o nome do cliente e um menu de ações com opções de editar ou deletar.
+ * Também permite abrir os detalhes do cliente ao clicar no item.
+ *
+ * @param {ClientItemProps} props - Propriedades do componente.
+ * @param {Client} props.client - Objeto do cliente a ser exibido.
+ * @param {(id: number) => Promise<void>} props.onDeleteClient - Função chamada ao confirmar exclusão do cliente.
+ * @param {(id: number) => void} props.onEditClient - Função chamada ao clicar na opção de editar.
+ * @param {(id: number) => void} props.onViewDetails - Função chamada ao clicar no item para ver detalhes.
+ *
+ * @state
+ * - `isDeleteDialogOpen` (boolean): controla a exibição do modal de confirmação para deletar.
+ *
+ * @events
+ * - Clique no item chama `onViewDetails`.
+ * - Ícone de lápis aciona `onEditClient`.
+ * - Ícone de lixeira abre o diálogo de confirmação e, ao confirmar, chama `onDeleteClient`.
+ *
+ * @dependencies
+ * - `lucide-react`: ícones (User, MoreVertical, SquarePen, Trash2)
+ * - `DropdownMenu`, `DropdownMenuContent`, `DropdownMenuItem`, `DropdownMenuTrigger`: menu suspenso de ações
+ * - `DeleteClientDialog`: componente de confirmação de exclusão
+ *
+ * @returns {JSX.Element} Item da lista de clientes com menu para remoção e edição
+ */
+export default function ClientItem({ client, onDeleteClient, onEditClient, onViewDetails }: ClientItemProps): JSX.Element {
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
+    const handleEdit = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        onEditClient(client.id);
+    };
 
-export default function ClientItem({ client, onDeleteClient, onEditClient }: ClientItemProps) {
+    const handleDelete = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        await onDeleteClient(client.id);
+        setIsDeleteDialogOpen(false);
+    }
+
     return (
-        <div
+        <li onClick={() => onViewDetails(client.id)}
             className="flex items-center py-1 px-3 bg-[var(--card-foreground)] rounded-md border border-gray-200 shadow-sm hover:shadow-md w-full"
         >
             <div
@@ -31,20 +73,31 @@ export default function ClientItem({ client, onDeleteClient, onEditClient }: Cli
             <div className="flex items-center">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <button className="p-1 rounded-full hover:bg-gray-100">
+                        <button className="p-2 rounded-full hover:bg-gray-100">
                             <MoreVertical className="h-4 w-4 text-gray-400" />
                         </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-36">
-                        <DropdownMenuItem onClick={() => onEditClient(client.id)} className="cursor-pointer">
+                        <DropdownMenuItem onClick={(e) => handleEdit(e)} className="cursor-pointer">
                             <SquarePen />Editar
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => onDeleteClient(client.id)} className="cursor-pointer text-red-500">
+                        <DropdownMenuItem onClick={(e) => {
+                            e.stopPropagation();
+                            setIsDeleteDialogOpen(true);
+                        }}
+                            className="cursor-pointer text-red-500"
+                        >
                             <Trash2 />Deletar
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
-        </div >
+
+            <DeleteClientDialog
+                open={isDeleteDialogOpen}
+                onClose={() => setIsDeleteDialogOpen(false)}
+                onConfirm={(handleDelete)}
+            />
+        </li >
     );
 }
